@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Image, View, KeyboardAvoidingView, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -11,11 +11,17 @@ const Login = () => {
     const [password, setPassword] = useState('');
   
     const { signIn } = useContext(AuthContext);
+
+    useEffect(() => {
+        signIn('', '');
+    }, [])
   
     return (
+        <>
         <KeyboardAvoidingView
             style={{
-                backgroundColor: '#ccc'
+                backgroundColor: '#ccc',
+                display: 'flex'
             }}
             behavior={'padding'}
             enabled
@@ -26,14 +32,21 @@ const Login = () => {
                 paddingTop: 100
             }}
         >
+            <View style={{
+                flex: 1,
+                alignSelf: 'center',
+                alignItems: 'center',
+                width: '100%'
+            }}>
                 <View style={{top: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: 40,
-                    marginBottom: 50,
+                    marginBottom: 60,
                 }}>
-                    <Image resizeMethod="resize" //style={estilosGlobais.thumbs}
-                    source={require('../../../assets/logo.jpeg')}/>
+                    <Text style={{
+                        fontSize: 62,
+                        color: '#f4511e'
+                    }}>Wiplei</Text>
                 </View>
                 
                 <View 
@@ -49,7 +62,7 @@ const Login = () => {
                             height: 50,
                         }}
                         backgroundColor= '#fff'
-                        placeholder="Username"
+                        placeholder="Usuário"
                         value={username}
                         onChangeText={setUsername}
                     />
@@ -102,19 +115,42 @@ const Login = () => {
                 >  
                     <Text style={{fontSize: 16, color: "#fff"}}>Login</Text>
                 </TouchableOpacity>
-
                 
-            <Text style={{
-                    width: '90%',
-                    textAlign: 'center',
-                    color: "#aaa",
-                    position: 'absolute',
-                    bottom: 5
+
+                    
+                <TouchableOpacity style={{
+                    marginTop: 30
                 }}>
-                    Ao prosseguir você concorda com os Termos de Serviços e Políticas de Privacidade.
-                </Text>
+                    <Text style={{
+                        color: '#555'
+                    }}>Registre-se</Text>
+                </TouchableOpacity>
+
+                <View style={{
+                    display: 'flex',
+                    flex: 1,
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end'
+                }}>
+                    <Text style={{
+                        width: '90%',
+                        textAlign: 'center',
+                        color: "#aaa",
+                        
+                    }}>
+                        Ao prosseguir você concorda com os Termos de Serviços e Políticas de Privacidade.
+                    </Text>
+                </View>
+                
+                </View>
+                
+               
 
         </KeyboardAvoidingView>
+        
+        </>
+
       
     );
 }
