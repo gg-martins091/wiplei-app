@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TextInput} from 'react-native';
+import { View, Image, Text, TextInput, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Slider from '@react-native-community/slider';
 import {Picker} from '@react-native-community/picker';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import LogoutHeader from '../../Components/LogoutHeader';
-
 import {
     ScrollContainer,
     Estabelecimento,
@@ -18,8 +13,8 @@ import {
     FilterInputView,
     FilterFormInput
 } from './styles';
+import { StackActions } from '@react-navigation/native';
 
-const Stack = createStackNavigator();
 
 const Estabelecimentos = (props) => {
     let [items, setItems] = useState([]);
@@ -126,7 +121,7 @@ const Estabelecimentos = (props) => {
 
     return (
        <>
-         <FilterContainer>
+        <FilterContainer>
             <FilterButton filterOpen={filterOpen} onPress={() => { setFilterOpen(!filterOpen);}}>
                 <Text style={{fontSize: 18, marginRight: 5}}>
                     Filtros
@@ -314,7 +309,7 @@ const Estabelecimentos = (props) => {
                     && (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
-                    <Estabelecimento key={k} onPress={() => props.navigation.navigate('Teste')}>
+                    <Estabelecimento key={k} onPress={() => props.navigation.dispatch(StackActions.push('EstabelecimentoDetalhe', { user: 'Wojtek' }))}>
                         <View>
                             <Word fsize="20px">{i.name}</Word>
                         </View>
@@ -346,35 +341,5 @@ const Estabelecimentos = (props) => {
     );
 }
 
-const Teste = () => {
-    return (<Text>Alo</Text>)
-}
-const EstabelecimentosStack = () => {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen 
-                name="Estabelecimentos"
-                component={Estabelecimentos} 
-                options={{
-                    title: 'Wiplei',
-                    headerRight: () => (
-                        <LogoutHeader />
-                    )
-                }}
-            />
 
-<Stack.Screen 
-                name="Teste"
-                component={Teste} 
-                options={{
-                    title: 'Wiplei',
-                    headerRight: () => (
-                        <LogoutHeader />
-                    )
-                }}
-            />
-        </Stack.Navigator>
-    );
-}
-
-export default EstabelecimentosStack;
+export default Estabelecimentos;

@@ -101,17 +101,7 @@ export default function App({ navigation }) {
     return (
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{
-                    headerStyle: {
-                        backgroundColor: '#f4511e',
-                    },
-                    headerTintColor: '#fff',
-                    headerTitleStyle: {
-                        paddingRight: 50,
-                    },
-                }}
-            >
+            <Stack.Navigator>
                 {state.isLoading ? (
                 // We haven't finished checking for the token yet
                 <Stack.Screen name="Splash" component={SplashScreen} />
@@ -131,10 +121,7 @@ export default function App({ navigation }) {
                     name="Home"
                     component={Home} 
                     options={{
-                        title: 'Wiplei',
-                        headerRight: () => (
-                            <LogoutHeader />
-                )
+                        headerShown: false
                     }}
                 />
                 )}

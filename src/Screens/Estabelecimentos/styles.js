@@ -21,7 +21,7 @@ export const Word = styled.Text`
 
 export const FilterContainer = styled.View`
     padding: 15px;
-    backgroundColor: #fff;
+    background-color: #fff;
     marginBottom: 5px;
     padding: 15px;
     display: flex;
@@ -41,8 +41,6 @@ export const FilterButton = styled.TouchableOpacity`
 export const FilterFormContainer = styled.ScrollView`
     padding: 15px;
 `;
-
-FilterInputView
 
 export const FilterInputView = styled.View`
     display: flex;
