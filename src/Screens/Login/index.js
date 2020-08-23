@@ -13,20 +13,16 @@ const Login = () => {
     const { signIn } = useContext(AuthContext);
 
     useEffect(() => {
-        signIn('', '');
+       signIn('', '');
     }, [])
   
     return (
         <>
         <KeyboardAvoidingView
-            style={{
-                backgroundColor: '#ccc',
-                display: 'flex'
-            }}
             behavior={'padding'}
             enabled
             style={{
-                backgroundColor: '#eee',
+                backgroundColor: '#efefef',
                 height: '100%',
                 alignItems: 'center',
                 paddingTop: 100

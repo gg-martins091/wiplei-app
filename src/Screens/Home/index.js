@@ -13,7 +13,6 @@ const Tab = createMaterialTopTabNavigator();
 
 
 const Home = () => {
-
     return (
         <Tab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
             <Tab.Screen name="Estabelecimentos" component={EstabelecimentosScreen} />
