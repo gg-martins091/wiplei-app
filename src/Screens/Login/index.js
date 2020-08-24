@@ -2,8 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Image, View, KeyboardAvoidingView, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-// import { Container } from './styles';
 import { AuthContext } from '../../Contexts';
 
 const Login = () => {
@@ -13,7 +11,7 @@ const Login = () => {
     const { signIn } = useContext(AuthContext);
 
     useEffect(() => {
-       signIn('', '');
+       //signIn('', '');
     }, [])
   
     return (
@@ -22,7 +20,7 @@ const Login = () => {
             behavior={'padding'}
             enabled
             style={{
-                backgroundColor: '#efefef',
+                backgroundColor: '#eee',
                 height: '100%',
                 alignItems: 'center',
                 paddingTop: 100
@@ -34,17 +32,8 @@ const Login = () => {
                 alignItems: 'center',
                 width: '100%'
             }}>
-                <View style={{top: 30,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: 60,
-                }}>
-                    <Text style={{
-                        fontSize: 62,
-                        color: '#f4511e'
-                    }}>Wiplei</Text>
-                </View>
-                
+
+                <Image style={{width: 250, height: 100, marginBottom: 45}} resizeMode="contain" source={require('../../../assets/logo.png')} />
                 <View 
                     style={{
                         justifyContent: 'center',
