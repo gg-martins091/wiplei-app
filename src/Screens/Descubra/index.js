@@ -20,7 +20,7 @@ const TabNavigator = () => {
     )
 }
 
-const Home = () => {
+const Descubra = () => {
     return (
         <HomeStack.Navigator
             screenOptions={{
@@ -57,4 +57,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default Descubra;

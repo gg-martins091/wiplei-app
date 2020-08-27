@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import { AuthContext } from './src/Contexts';
 import Login from './src/Screens/Login';
-import Home from './src/Screens/Home';
+import Main from './src/Screens/Main';
 
 import LogoutHeader from './src/Components/LogoutHeader';
 
@@ -118,8 +118,8 @@ export default function App({ navigation }) {
                 ) : (
                 // User is signed in
                 <Stack.Screen 
-                    name="Home"
-                    component={Home} 
+                    name="Main"
+                    component={Main} 
                     options={{
                         headerShown: false
                     }}
