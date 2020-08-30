@@ -1,15 +1,12 @@
-import React, {useReducer, useEffect, useMemo, useContext} from 'react';
-import { View, Text, Button } from 'react-native';
+import React, {useReducer, useEffect, useMemo} from 'react';
+import { View, Text } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import { AuthContext } from './src/Contexts';
 import Login from './src/Screens/Login';
 import Main from './src/Screens/Main';
-
-import LogoutHeader from './src/Components/LogoutHeader';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +35,7 @@ export default function App({ navigation }) {
                 ...prevState,
                 isSignout: false,
                 userToken: action.token,
+                userId: action.id
               };
             case 'SIGN_OUT':
               return {
@@ -51,6 +49,7 @@ export default function App({ navigation }) {
           isLoading: true,
           isSignout: false,
           userToken: null,
+          userId: 0,
         }
     );
 
@@ -82,10 +81,13 @@ export default function App({ navigation }) {
             // We will also need to handle errors if sign in failed
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token
-    
-            dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+            AsyncStorage.setItem('id', '1');
+            dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', id: 1 });
           },
-          signOut: () => dispatch({ type: 'SIGN_OUT' }),
+          signOut: () => {
+            AsyncStorage.removeItem('id');
+            dispatch({ type: 'SIGN_OUT' })
+          },
           signUp: async data => {
             // In a production app, we need to send user data to server and get a token
             // We will also need to handle errors if sign up failed

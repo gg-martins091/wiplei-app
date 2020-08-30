@@ -1,17 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Image, View, KeyboardAvoidingView, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { AuthContext } from '../../Contexts';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-  
     const { signIn } = useContext(AuthContext);
-
+    
     useEffect(() => {
-       //signIn('', '');
+       signIn('', '');
     }, [])
   
     return (
@@ -84,7 +82,6 @@ const Login = () => {
                     }} 
                     name="lock" size={20} />
                 </View>
-
                 
                 <TouchableOpacity 
                     onPress={() => signIn({ username, password })} 
@@ -100,8 +97,6 @@ const Login = () => {
                 >  
                     <Text style={{fontSize: 16, color: "#fff"}}>Login</Text>
                 </TouchableOpacity>
-                
-
                     
                 <TouchableOpacity style={{
                     marginTop: 30
@@ -127,16 +122,9 @@ const Login = () => {
                         Ao prosseguir você concorda com os Termos de Serviços e Políticas de Privacidade.
                     </Text>
                 </View>
-                
                 </View>
-                
-               
-
         </KeyboardAvoidingView>
-        
         </>
-
-      
     );
 }
 

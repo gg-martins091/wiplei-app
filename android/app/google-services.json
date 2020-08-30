@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "352875735915",
+    "firebase_url": "https://wiplei.firebaseio.com",
+    "project_id": "wiplei",
+    "storage_bucket": "wiplei.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352875735915:android:ff5777717b13121a0d7a2e",
+        "android_client_info": {
+          "package_name": "com.wiplei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352875735915-um0tr4leo6rn3g3nfn0trluevis7g5th.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wiplei",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "352875735915-m5urt4fgv8efu15as43kbrhmvu01dhek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNeq3zVXhJmsuwEzAyVrDxD0IQ_VsRjqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352875735915-m5urt4fgv8efu15as43kbrhmvu01dhek.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
