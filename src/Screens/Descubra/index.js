@@ -43,16 +43,7 @@ const Descubra = () => {
                     )
                 }}
             />
-            <HomeStack.Screen 
-                name="EstabelecimentoDetalhe"
-                component={EstabelecimentoDetalhe} 
-                options={{
-                    title: 'Wiplei',
-                    headerRight: () => (
-                        <LogoutHeader />
-                    )
-                }}
-            />
+           
         </HomeStack.Navigator>
     );
 }

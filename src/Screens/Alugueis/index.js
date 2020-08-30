@@ -15,7 +15,6 @@ import {
     FilterInputView,
     FilterFormInput
 } from './styles';
-import Aluguel from '../Aluguel';
 import { StackActions } from '@react-navigation/native';
 
 const AlugueisStack = createStackNavigator();
@@ -188,16 +187,7 @@ const AlugueisStackComponent = () => {
                     )
                 }}
             />
-            <AlugueisStack.Screen 
-                name="AluguelDetalhe"
-                component={Aluguel} 
-                options={{
-                    title: 'Wiplei',
-                    headerRight: () => (
-                        <LogoutHeader />
-                    )
-                }}
-            />
+            
         </AlugueisStack.Navigator>
     );
 }
