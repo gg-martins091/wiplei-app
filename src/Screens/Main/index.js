@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Descubra from '../Descubra';
 import Alugueis from '../Alugueis';
-import Aluguel from '../Aluguel';
+import Aluguel from '../AluguelDetalhe';
 import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
 import LogoutHeader from '../../Components/LogoutHeader';
 

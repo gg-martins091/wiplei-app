@@ -141,12 +141,12 @@ const Alugueis = (props) => {
                             <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
                                 <View style={{display: 'flex', flexDirection: 'row'}}>
                                     <Icon name="star" size={20} color="#f4511e" />
-                                    <Word fsize="14px" fcolor="#888">{i.rating}</Word>
-                                    <Word style={{marginLeft: 20}} fsize="14px" fcolor="#888">{i.distance}km</Word>
+                                    <Word fsize="14px" fcolor="#666">{i.rating}</Word>
+                                    <Word style={{marginLeft: 20}} fsize="14px" fcolor="#666">{i.distance}km</Word>
                                 </View>
                                 <View style={{marginTop: 10}}>
                     
-                                    <Word fsize="14px" fcolor="#888">09/10/2020 16:30</Word>
+                                    <Word fsize="14px" fcolor="#666">09/10/2020 16:30</Word>
                                 </View>
                                 <View style={{marginTop: 10}}>
                                     <Word fsize="18px" fcolor="#222">{i.address}</Word>

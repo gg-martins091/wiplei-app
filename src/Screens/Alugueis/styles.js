@@ -15,7 +15,7 @@ export const AluguelBox = styled.TouchableOpacity`
 
 
 export const Word = styled.Text`
-    color: ${props => props.fcolor || '#000'};
+    color: ${props => props.fcolor || '#222'};
     font-size: ${props => props.fsize || '14px'};
 `;
 
