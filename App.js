@@ -42,6 +42,7 @@ export default function App({ navigation }) {
                 ...prevState,
                 isSignout: true,
                 userToken: null,
+                userId: null,
               };
           }
         },
@@ -81,7 +82,11 @@ export default function App({ navigation }) {
             // We will also need to handle errors if sign in failed
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token
-            AsyncStorage.setItem('id', '1');
+            AsyncStorage.setItem('user', JSON.stringify({
+                id: 1,
+                token: 'dummy-auth-token',
+                nome: 'Gabriel Martins'
+            }));
             dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', id: 1 });
           },
           signOut: () => {

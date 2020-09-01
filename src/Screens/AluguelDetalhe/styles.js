@@ -42,7 +42,7 @@ export const Chat = styled.ScrollView`
 `
 
 export const ChatMsg = styled.View`
-    background-color: ${props => props.mine ? 'rgba(244, 81, 30, .5)' : 'white'};
+    background-color: ${props => props.mine ? 'rgba(244, 81, 30, .2)' : 'white'};
     max-width: 90%;
     border-radius: 8px;
     padding: 5px 10px;

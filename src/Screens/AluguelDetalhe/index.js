@@ -12,22 +12,38 @@ import {
     ChatInputContainer 
 } from './styles';
 import AsyncStorage from '@react-native-community/async-storage';
+import Firestore from '@react-native-firebase/firestore';
+import {format} from 'date-fns';
 
 
-const Aluguel = () => {
-    const [id, setId] = useState('');
+const Aluguel = ({route}) => {
+    const [user, setUser] = useState();
+    const [msgs, setMsgs] = useState([]);
+    const [msg, setMsg] = useState('');
+
     useEffect(() => {
-        async function getId() {
-            return await AsyncStorage.getItem('id');
+        async function getUser() {
+            const user = JSON.parse(await AsyncStorage.getItem('user'));
+            console.log(user);
+            setUser(user);
         }
-        setId(getId());
+        getUser();
+
+        const unsubscribe = Firestore().collection('chat').doc(route.params.chatId).collection('msgs').onSnapshot(snap => {
+            if (snap && !snap.empty) {
+                const data = snap.docs.map(doc => doc.data())
+                setMsgs(data);
+            }
+        }, e => {
+            console.log(e);
+        });
+        return () => unsubscribe();
     }, [])
+
     const scrollViewRef = useRef();
     return (
         <>
         <Header>
-            <Text>{id}</Text>
-
             <HeaderTop> 
                 <DateBox>
                     <Text style={{color: '#f4511e'}}>MAY</Text>
@@ -56,156 +72,49 @@ const Aluguel = () => {
             ref={scrollViewRef}
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
         >
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadsadsaad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsadsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg>
-                <Text>
-                    dsaddsadsadsadadsadsadsadasdasdsadsaddsdasdsadasdsadasdsadasdasdsad
-                </Text>
-            </ChatMsg>
-            <ChatMsg mine={true}>
-                <Text>
-                    sasasasasasas
-                </Text>
-            </ChatMsg>
+            {msgs.length > 0 && msgs.map((m, i) => 
+                (
+                    <ChatMsg key={i} mine={m.userid == user.id}>
+                        <View style={{marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Text style={{fontSize: 10, color: '#666'}}>
+                                {m.userid == user.id ? 'eu' : m.usuario}
+                            </Text>
+                            <Text style={{marginLeft: 8, fontSize: 8, color: '#666'}}>
+                                {format(m.created_at.toDate(), 'HH:mm')}
+                            </Text>
+                        </View>
+                        
+                        <Text>
+                            {m.msg}
+                        </Text>
+                        
+                    </ChatMsg>
+                )
+            )}
+            
+            
         </Chat>
         <ChatInputContainer>
             <Input
                 placeholder="Digite sua mensagem"
                 placeholderTextColor="#bbb"
                 multiline={true}
-            >
+                value={msg}
+                onChangeText={setMsg}
+            />
 
-            </Input>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                if (msg.length > 0) {
+                    Firestore().collection('chat').doc(route.params.chatId).collection('msgs').add({
+                        created_at: new Date(),
+                        msg: msg,
+                        userid: user.id,
+                        usuario: user.nome
+                    });
+                    setMsg('');
+                }
+                
+            }}>
                 <Icon name="send" size={30} color="#f4511e" style={{marginRight: 5}}/>
             </TouchableOpacity>
         </ChatInputContainer>

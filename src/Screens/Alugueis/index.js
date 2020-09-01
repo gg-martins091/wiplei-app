@@ -37,7 +37,8 @@ const Alugueis = (props) => {
                 openTime: '8',
                 closeTime: '21',
                 address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
             },
             {
                 name: 'Eleven Futebol',
@@ -46,7 +47,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '24',
                 address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
+                img: require('../../../assets/futebol.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
             {
@@ -56,7 +58,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '20',
                 address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
             {
@@ -66,7 +69,8 @@ const Alugueis = (props) => {
                 openTime: '8',
                 closeTime: '21',
                 address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
             },
             {
                 name: 'Eleven Futebol',
@@ -75,7 +79,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '24',
                 address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
+                img: require('../../../assets/futebol.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
             {
@@ -85,7 +90,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '20',
                 address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
             {
@@ -95,7 +101,8 @@ const Alugueis = (props) => {
                 openTime: '8',
                 closeTime: '21',
                 address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
             },
             {
                 name: 'Eleven Futebol',
@@ -104,7 +111,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '24',
                 address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
+                img: require('../../../assets/futebol.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
             {
@@ -114,7 +122,8 @@ const Alugueis = (props) => {
                 openTime: '9',
                 closeTime: '20',
                 address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
+                img: require('../../../assets/paintball.jpg'),
+                chatId: 'YEjIPNmCtGBPBdRXICrX'
 
             },
 
@@ -133,7 +142,7 @@ const Alugueis = (props) => {
                     && (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
-                    <AluguelBox key={k} onPress={() => props.navigation.dispatch(() => StackActions.push('AluguelDetalhe'))}>
+                    <AluguelBox key={k} onPress={() => props.navigation.dispatch(() => StackActions.push('AluguelDetalhe', {chatId: i.chatId}))}>
                         <View>
                             <Word fsize="20px">{i.name}</Word>
                         </View>

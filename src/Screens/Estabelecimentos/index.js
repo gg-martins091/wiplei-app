@@ -11,9 +11,9 @@ import {
     FilterButton,
     FilterFormContainer,
     FilterInputView,
-    FilterFormInput
 } from './styles';
 import { StackActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 const Estabelecimentos = (props) => {
@@ -26,6 +26,10 @@ const Estabelecimentos = (props) => {
     let [filterEsporte, setFilterEsporte] = useState('');
 
     useEffect(() => {
+        async function t() {
+            console.log(await AsyncStorage.getItem('id'));
+        }
+        t();
         setItems([
             {
                 name: 'KTrop Paintball e Airsoft',
