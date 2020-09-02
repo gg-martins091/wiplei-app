@@ -11,16 +11,16 @@ import CampeonatosScreen from '../Campeonatos';
 const Tab = createMaterialTopTabNavigator();
 const HomeStack = createStackNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = (props) => {
     return (
         <Tab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
-            <Tab.Screen name="Estabelecimentos" component={Estabelecimentos} />
-            <Tab.Screen name="Campeonatos" component={CampeonatosScreen} />
+            <Tab.Screen {...props} name="Estabelecimentos" component={Estabelecimentos} />
+            <Tab.Screen {...props} name="Campeonatos" component={CampeonatosScreen} />
         </Tab.Navigator>
     )
 }
 
-const Descubra = () => {
+const Descubra = (props) => {
     return (
         <HomeStack.Navigator
             screenOptions={{
@@ -34,6 +34,7 @@ const Descubra = () => {
             }}
         >
             <HomeStack.Screen 
+                {...props}
                 name="Tabs"
                 component={TabNavigator} 
                 options={{

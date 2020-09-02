@@ -10,12 +10,11 @@ import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
 import LogoutHeader from '../../Components/LogoutHeader';
 
 
-
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
 
 
-function Main() {
+function Main(props) {
   return (
     <Tab.Navigator
       initialRouteName="Descubra"
@@ -26,6 +25,7 @@ function Main() {
       }}
     >
         <Tab.Screen 
+            {...props}
             name="Descubra"
             options={{
                 tabBarIcon: ({ color, size }) => (
@@ -40,6 +40,7 @@ function Main() {
         />
 
         <Tab.Screen 
+            {...props}
             name="Alugueis"
             options={{
                 tabBarIcon: ({ color, size }) => (
@@ -58,7 +59,8 @@ function Main() {
 }
 
 
-function MainStackComponent() {
+function MainStackComponent(props) {
+    console.log(props);
     return (
         <MainStack.Navigator
             screenOptions={{
@@ -72,6 +74,7 @@ function MainStackComponent() {
             }}
         >
             <MainStack.Screen 
+                {...props}
                 name="MainTabs"
                 component={Main} 
                 options={{
@@ -82,6 +85,7 @@ function MainStackComponent() {
                 }}
             />
             <MainStack.Screen 
+                {...props}
                 name="AluguelDetalhe"
                 component={Aluguel} 
                 options={{

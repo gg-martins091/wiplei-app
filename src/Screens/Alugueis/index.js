@@ -29,7 +29,7 @@ const Alugueis = (props) => {
     let [filterEsporte, setFilterEsporte] = useState('');
 
     useEffect(() => {
-        setItems([
+        /* setItems([
             {
                 name: 'KTrop Paintball e Airsoft',
                 rating: 4.5,
@@ -127,7 +127,7 @@ const Alugueis = (props) => {
 
             },
 
-        ])
+        ]) */
     }, []);
     
 

@@ -7,11 +7,8 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { signIn } = useContext(AuthContext);
+
     
-    useEffect(() => {
-       signIn('', '');
-    }, [])
-  
     return (
         <>
         <KeyboardAvoidingView
@@ -46,6 +43,9 @@ const Login = () => {
                         }}
                         backgroundColor= '#fff'
                         placeholder="Usuário"
+                        autoCompleteType="email"
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
                         value={username}
                         onChangeText={setUsername}
                     />
@@ -84,10 +84,15 @@ const Login = () => {
                 </View>
                 
                 <TouchableOpacity 
-                    onPress={() => signIn({ username, password })} 
+                    disabled={username.length == 0 || password.length == 0}
+                    onPress={() => {
+                        if (username.length > 0 && password.length > 0) {
+                            signIn({ username: username.toLowerCase(), password });
+                        }
+                    }} 
                     color="#fff"
                     style={{
-                        backgroundColor: "#f4511e",
+                        backgroundColor: (username.length == 0 || password.length == 0) ? "#ccc" : "#f4511e",
                         width: '80%',
                         borderRadius: 30,
                         padding: 15,

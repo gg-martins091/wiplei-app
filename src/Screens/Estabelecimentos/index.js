@@ -13,8 +13,7 @@ import {
     FilterInputView,
 } from './styles';
 import { StackActions } from '@react-navigation/native';
-import AsyncStorage from '@react-native-community/async-storage';
-
+import Api from '../../Service';
 
 const Estabelecimentos = (props) => {
     let [items, setItems] = useState([]);
@@ -26,11 +25,11 @@ const Estabelecimentos = (props) => {
     let [filterEsporte, setFilterEsporte] = useState('');
 
     useEffect(() => {
-        async function t() {
-            console.log(await AsyncStorage.getItem('id'));
-        }
-        t();
-        setItems([
+        Api.get('establishment').then(d => {
+            
+            console.log(d.data);
+        });
+        /* setItems([
             {
                 name: 'KTrop Paintball e Airsoft',
                 rating: 4.5,
@@ -119,7 +118,7 @@ const Estabelecimentos = (props) => {
 
             },
 
-        ])
+        ]) */
     }, []);
     
 
