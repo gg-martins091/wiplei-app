@@ -24,7 +24,6 @@ const Aluguel = ({route}) => {
     useEffect(() => {
         async function getUser() {
             const user = JSON.parse(await AsyncStorage.getItem('user'));
-            console.log(user);
             setUser(user);
         }
         getUser();
@@ -34,8 +33,6 @@ const Aluguel = ({route}) => {
                 const data = snap.docs.map(doc => doc.data())
                 setMsgs(data);
             }
-        }, e => {
-            console.log(e);
         });
         return () => unsubscribe();
     }, [])

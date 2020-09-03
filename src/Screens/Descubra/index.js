@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import LogoutHeader from '../../Components/LogoutHeader';
-
 import Estabelecimentos from '../Estabelecimentos';
-import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
 import CampeonatosScreen from '../Campeonatos';
 
 const Tab = createMaterialTopTabNavigator();
 const HomeStack = createStackNavigator();
 
 const TabNavigator = (props) => {
+    const [propsState, setPropsState] = useState(props); 
     return (
         <Tab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
-            <Tab.Screen {...props} name="Estabelecimentos" component={Estabelecimentos} />
-            <Tab.Screen {...props} name="Campeonatos" component={CampeonatosScreen} />
+            <Tab.Screen name="Estabelecimentos" children={ props => <Estabelecimentos {...props} user={propsState.user} />} />
+            <Tab.Screen name="Campeonatos" children={ props => <CampeonatosScreen {...props} user={propsState.user} />} />
         </Tab.Navigator>
     )
 }
 
 const Descubra = (props) => {
+    const [propsState, setPropsState] = useState(props); 
     return (
         <HomeStack.Navigator
             screenOptions={{
@@ -33,17 +33,17 @@ const Descubra = (props) => {
                 },
             }}
         >
-            <HomeStack.Screen 
-                {...props}
+            <HomeStack.Screen
                 name="Tabs"
-                component={TabNavigator} 
                 options={{
                     title: 'Wiplei',
                     headerRight: () => (
                         <LogoutHeader />
                     )
                 }}
-            />
+            >
+                {props => <TabNavigator {...props} user={propsState.user}/>}
+            </HomeStack.Screen>
            
         </HomeStack.Navigator>
     );

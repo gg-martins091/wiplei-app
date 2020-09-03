@@ -75,7 +75,6 @@ export default function App({ navigation }) {
           let user;
           try {
             user = JSON.parse(await AsyncStorage.getItem('userInfo')) || {};
-            console.log(user);
           } catch (e) {
             // Restoring token failed
           }
@@ -99,22 +98,18 @@ export default function App({ navigation }) {
             // We will also need to handle errors if sign in failed
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token
-            console.log(data);
             
             Api.post('login', {
                 email: data.username,
                 password: data.password,
             }).then(({data}) => {
-                console.log(data);
                 const d = {
                     id: data.user.id,
                     token: data.token,
                     name: data.user.name,
                     surname: data.user.surname
                 };
-                console.log(d);
                 AsyncStorage.setItem('userInfo', JSON.stringify(d)).then(x => {
-                    console.log('x');
                     dispatch({ type: 'SIGN_IN', token: data.token, id: data.user.id, name: data.user.name, surname: data.user.surname });
                 });
             }).catch(e => {
@@ -163,10 +158,12 @@ export default function App({ navigation }) {
                         headerShown: false
                     }}
                 >
-                    {props => <Main {...props} userToken={state.usertoken}
-                    userId={state.id}
-                    userName={state.name}
-                    userSurname={state.surname} />}
+                    {props => <Main {...props} user={{
+                        userToken: state.id.token,
+                        userId: state.id.id,
+                        userName: state.name,
+                        userSurname: state.surname}}
+                     />}
                 </Stack.Screen>
 
                 )}

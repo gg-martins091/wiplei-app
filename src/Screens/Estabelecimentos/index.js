@@ -27,7 +27,7 @@ const Estabelecimentos = (props) => {
     useEffect(() => {
         Api.get('establishment').then(d => {
             
-            console.log(d.data);
+            //console.log(d.data);
         });
         /* setItems([
             {

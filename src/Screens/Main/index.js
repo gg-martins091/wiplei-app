@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,13 +9,12 @@ import Aluguel from '../AluguelDetalhe';
 import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
 import LogoutHeader from '../../Components/LogoutHeader';
 
-
 const Tab = createBottomTabNavigator();
 const MainStack = createStackNavigator();
 
-
 function Main(props) {
-  return (
+    const [propsState, setPropsState] = useState(props);
+    return (
     <Tab.Navigator
       initialRouteName="Descubra"
       tabBarOptions={{
@@ -25,7 +24,6 @@ function Main(props) {
       }}
     >
         <Tab.Screen 
-            {...props}
             name="Descubra"
             options={{
                 tabBarIcon: ({ color, size }) => (
@@ -36,8 +34,10 @@ function Main(props) {
                 )
                 //tabBarBadge: 3, 
             }}
-            component={Descubra} 
-        />
+        
+        >
+            {props => <Descubra {...props} user={propsState.user}/>}
+        </Tab.Screen>
 
         <Tab.Screen 
             {...props}
@@ -51,8 +51,9 @@ function Main(props) {
                 )
                 //tabBarBadge: 3, 
             }}
-            component={Alugueis}
-        />
+        >
+            {props => <Alugueis {...props} user={propsState.user}/>}
+        </Tab.Screen>
       
     </Tab.Navigator>
   );
@@ -60,7 +61,7 @@ function Main(props) {
 
 
 function MainStackComponent(props) {
-    console.log(props);
+    const [propsState, setPropsState] = useState(props);
     return (
         <MainStack.Navigator
             screenOptions={{
@@ -74,37 +75,40 @@ function MainStackComponent(props) {
             }}
         >
             <MainStack.Screen 
-                {...props}
                 name="MainTabs"
-                component={Main} 
                 options={{
                     title: 'Wiplei',
                     headerRight: () => (
                         <LogoutHeader />
                     )
                 }}
-            />
+            >
+                {props => <Main {...props} user={propsState.user}/>}
+            </MainStack.Screen>
+            
             <MainStack.Screen 
-                {...props}
                 name="AluguelDetalhe"
-                component={Aluguel} 
                 options={{
                     title: 'Wiplei',
                     headerRight: () => (
                         <LogoutHeader />
                     )
                 }}
-            />
-             <MainStack.Screen 
+            >
+                {props => <Aluguel {...props} user={propsState.user}/>}
+            </MainStack.Screen>
+
+            <MainStack.Screen 
                 name="EstabelecimentoDetalhe"
-                component={EstabelecimentoDetalhe} 
                 options={{
                     title: 'Wiplei',
                     headerRight: () => (
                         <LogoutHeader />
                     )
                 }}
-            />
+            >
+                {props => <EstabelecimentoDetalhe {...props} user={propsState.user}/>}
+            </MainStack.Screen>
         </MainStack.Navigator>
     );
 }
