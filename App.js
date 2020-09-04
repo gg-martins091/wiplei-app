@@ -7,11 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from './src/Contexts';
 import Login from './src/Screens/Login';
 import Main from './src/Screens/Main';
-import Axios from 'axios';
-
-const Api = Axios.create({
-    baseURL: 'http://192.168.15.12:2424/',
-});
+import Api from './src/Service';
 
 
 const Stack = createStackNavigator();
@@ -75,6 +71,7 @@ export default function App({ navigation }) {
           let user;
           try {
             user = JSON.parse(await AsyncStorage.getItem('userInfo')) || {};
+            console.log(user);
           } catch (e) {
             // Restoring token failed
           }
@@ -84,6 +81,10 @@ export default function App({ navigation }) {
           // This will switch to the App screen or Auth screen and this loading
           // screen will be unmounted and thrown away.
           if (user) {
+            Api.interceptors.request.use(async config => {
+                config.headers.Authorization = `Bearer ${user.token}`;
+                return config;
+            });
             dispatch({ type: 'RESTORE_TOKEN', token: user.token, id: user.id, name: user.name, surname: user.surname });
           }
         };
@@ -109,6 +110,7 @@ export default function App({ navigation }) {
                     name: data.user.name,
                     surname: data.user.surname
                 };
+                
                 AsyncStorage.setItem('userInfo', JSON.stringify(d)).then(x => {
                     dispatch({ type: 'SIGN_IN', token: data.token, id: data.user.id, name: data.user.name, surname: data.user.surname });
                 });

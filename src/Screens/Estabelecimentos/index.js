@@ -15,110 +15,74 @@ import {
 import { StackActions } from '@react-navigation/native';
 import Api from '../../Service';
 
+const timePreset = [
+    "00:00",
+    "00:30",
+    "01:00",
+    "01:30",
+    "02:00",
+    "02:30",
+    "03:00",
+    "03:30",
+    "04:00",
+    "04:30",
+    "05:00",
+    "05:30",
+    "06:00",
+    "06:30",
+    "07:00",
+    "07:30",
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+    "18:30",
+    "19:00",
+    "19:30",
+    "20:00",
+    "20:30",
+    "21:00",
+    "21:30",
+    "22:00",
+    "22:30",
+    "23:00",
+    "23:30"
+]
+
 const Estabelecimentos = (props) => {
+
     let [items, setItems] = useState([]);
     let [filterOpen, setFilterOpen] = useState(false);
     let [filter, setFilter] = useState('');
     let [filterDistance, setFilterDistance] = useState(5);
-    let [filterOpenTime, setFilterOpenTime] = useState(8);
-    let [filterCloseTime, setFilterCloseTime] = useState(22);
+    let [filterOpenTime, setFilterOpenTime] = useState(17);
+    let [filterCloseTime, setFilterCloseTime] = useState(46);
     let [filterEsporte, setFilterEsporte] = useState('');
 
     useEffect(() => {
-        Api.get('establishment').then(d => {
-            
-            //console.log(d.data);
+        Api.get('establishments').then(d => {
+            setItems(d.data);
+        }).catch(e => {
+            console.log(e);
         });
-        /* setItems([
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
-
-            },
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
-
-            },
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg')
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg')
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg')
-
-            },
-
-        ]) */
+       
     }, []);
     
 
@@ -190,30 +154,11 @@ const Estabelecimentos = (props) => {
                                 }
                             }}
                         >
-                            <Picker.Item label="01h" value={1} />
-                            <Picker.Item label="02h" value={2} />
-                            <Picker.Item label="03h" value={3} />
-                            <Picker.Item label="04h" value={4} />
-                            <Picker.Item label="05h" value={5} />
-                            <Picker.Item label="06h" value={6} />
-                            <Picker.Item label="07h" value={7} />
-                            <Picker.Item label="08h" value={8} />
-                            <Picker.Item label="09h" value={9} />
-                            <Picker.Item label="10h" value={10} />
-                            <Picker.Item label="11h" value={11} />
-                            <Picker.Item label="12h" value={12} />
-                            <Picker.Item label="13h" value={13} />
-                            <Picker.Item label="14h" value={14} />
-                            <Picker.Item label="15h" value={15} />
-                            <Picker.Item label="16h" value={16} />
-                            <Picker.Item label="17h" value={17} />
-                            <Picker.Item label="18h" value={18} />
-                            <Picker.Item label="19h" value={19} />
-                            <Picker.Item label="20h" value={20} />
-                            <Picker.Item label="21h" value={21} />
-                            <Picker.Item label="22h" value={22} />
-                            <Picker.Item label="23h" value={23} />
-                            <Picker.Item label="00h" value={24} />
+                            {timePreset.map((v,i) => (
+                                <Picker.Item key={i} label={v} value={i} />
+
+                            ))}
+                           
                         </Picker>
                         <Text style={{color: '#aaa'}}>Até</Text>
                         <Picker
@@ -226,30 +171,10 @@ const Estabelecimentos = (props) => {
                                 }
                             }}
                         >
-                            <Picker.Item label="01h" value={1} />
-                            <Picker.Item label="02h" value={2} />
-                            <Picker.Item label="03h" value={3} />
-                            <Picker.Item label="04h" value={4} />
-                            <Picker.Item label="05h" value={5} />
-                            <Picker.Item label="06h" value={6} />
-                            <Picker.Item label="07h" value={7} />
-                            <Picker.Item label="08h" value={8} />
-                            <Picker.Item label="09h" value={9} />
-                            <Picker.Item label="10h" value={10} />
-                            <Picker.Item label="11h" value={11} />
-                            <Picker.Item label="12h" value={12} />
-                            <Picker.Item label="13h" value={13} />
-                            <Picker.Item label="14h" value={14} />
-                            <Picker.Item label="15h" value={15} />
-                            <Picker.Item label="16h" value={16} />
-                            <Picker.Item label="17h" value={17} />
-                            <Picker.Item label="18h" value={18} />
-                            <Picker.Item label="19h" value={19} />
-                            <Picker.Item label="20h" value={20} />
-                            <Picker.Item label="21h" value={21} />
-                            <Picker.Item label="22h" value={22} />
-                            <Picker.Item label="23h" value={23} />
-                            <Picker.Item label="00h" value={24} />
+                           {timePreset.map((v,i) => (
+                                <Picker.Item key={i} label={v} value={i} />
+
+                            ))}
                         </Picker>
                     </View>
                 </View>
@@ -305,11 +230,25 @@ const Estabelecimentos = (props) => {
         <ScrollContainer>
             {items.length < 1 && <Text>Não há estabalecimentos para serem exibidos.</Text>}
             {items.length > 0 && items.map((i, k) => {
+                let filterOpen = new Date();
+                filterOpen.setHours(timePreset[filterOpenTime].substring(0,2) -3, timePreset[filterOpenTime].substring(3,5), "00", "00")
+
+                let filterClose = new Date();
+                filterClose.setHours(timePreset[filterCloseTime].substring(0,2) -3, timePreset[filterCloseTime].substring(3,5), "00", "00");
+
+                let openTime = new Date();
+                openTime.setHours(i.open_hours.substring(0,2) -3, i.open_hours.substring(3,5), "00", "00");
+
+                let closeTime = new Date();
+                closeTime.setHours(i.close_hours.substring(0,2) -3, i.close_hours.substring(3,5), "00", "00");
+
+                console.log(openTime, filterOpen)
+                console.log(closeTime, filterClose)
                 if (i.name.toLowerCase().includes(filter.toLowerCase())
-                    && i.openTime >= filterOpenTime 
-                    && i.closeTime >= filterCloseTime
+                    && openTime <= filterOpen 
+                    && closeTime >= filterClose
                     && (filterEsporte == '' || i.esportes.includes(filterEsporte))
-                    && (filterDistance >= 15 || i.distance < filterDistance)
+                    //&& (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
                     <Estabelecimento key={k} onPress={() => props.navigation.dispatch(StackActions.push('EstabelecimentoDetalhe', { user: 'Wojtek' }))}>
@@ -320,18 +259,20 @@ const Estabelecimentos = (props) => {
                             <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
                                 <View style={{display: 'flex', flexDirection: 'row'}}>
                                     <Icon name="star" size={20} color="#f4511e" />
-                                    <Word fsize="14px" fcolor="#888">{i.rating}</Word>
-                                    <Word style={{marginLeft: 20}} fsize="14px" fcolor="#888">{i.distance}km</Word>
+                                    <Word fsize="14px" fcolor="#888">{i.stars}</Word>
+                                    {//<Word style={{marginLeft: 20}} fsize="14px" fcolor="#888">{i.distance}km</Word>
+                                    }
                                 </View>
                                 <View style={{marginTop: 10}}>
-                    
-                                    <Word fsize="14px" fcolor="#888">Funcionamento: {i.openTime} às {i.closeTime}</Word>
+                                    <Word fsize="14px" fcolor="#888">Funcionamento: {i.open_hours.substring(0,5)} às {i.close_hours.substring(0,5)}</Word>
                                 </View>
                                 <View style={{marginTop: 10}}>
                                     <Word fsize="18px" fcolor="#222">{i.address}</Word>
                                 </View>
                             </View>
-                            <Image style={{borderRadius: 5, maxWidth: 100, maxHeight: 100}} resizeMethod="resize" source={i.img} />
+                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{
+                                uri: `${Api.defaults.baseURL}files/${i.avatar.path}`
+                            }} />
                         </View>
                     </Estabelecimento>)
                 }
