@@ -71,7 +71,6 @@ export default function App({ navigation }) {
           let user;
           try {
             user = JSON.parse(await AsyncStorage.getItem('userInfo')) || {};
-            console.log(user);
           } catch (e) {
             // Restoring token failed
           }

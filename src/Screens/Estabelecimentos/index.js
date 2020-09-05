@@ -14,6 +14,7 @@ import {
 } from './styles';
 import { StackActions } from '@react-navigation/native';
 import Api from '../../Service';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const timePreset = [
     "00:00",
@@ -66,25 +67,61 @@ const timePreset = [
     "23:30"
 ]
 
-const Estabelecimentos = (props) => {
 
+function hasSportFiltered(e, filter) {
+    if (!filter || filter == 0) {
+        return true;
+    }
+
+    for (let i = 0; i < e.spaces.length; i++) {
+        if (e.spaces[i].sport.id == filter) return true;
+    }
+    
+    return false;
+}
+
+const Estabelecimentos = (props) => {
     let [items, setItems] = useState([]);
     let [filterOpen, setFilterOpen] = useState(false);
     let [filter, setFilter] = useState('');
     let [filterDistance, setFilterDistance] = useState(5);
-    let [filterOpenTime, setFilterOpenTime] = useState(17);
-    let [filterCloseTime, setFilterCloseTime] = useState(46);
-    let [filterEsporte, setFilterEsporte] = useState('');
+    let [filterOpenTime, setFilterOpenTime] = useState(20);
+    let [filterCloseTime, setFilterCloseTime] = useState(39);
+    let [filterSport, setFilterSport] = useState();
+    let [sports, setSports] = useState([]);
 
     useEffect(() => {
-        Api.get('establishments').then(d => {
+        async function getSports() {
+            const d = await Api.get('sports');
+            setSports(d.data);
+        }
+        getSports();
+
+        async function setTimeFilters() {
+            const fot = parseInt(await AsyncStorage.getItem('establishment_filterOpenTime') || 20);
+            setFilterOpenTime(fot);
+            const fct = parseInt(await AsyncStorage.getItem('establishment_filterCloseTime') || 39);
+            setFilterCloseTime(fct);
+        }
+        setTimeFilters();
+
+        async function getEstablishments() {
+            const d = await Api.get('establishments');
             setItems(d.data);
-        }).catch(e => {
-            console.log(e);
-        });
+        }
+        getEstablishments();
+
        
     }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('establishment_filterOpenTime', filterOpenTime.toString());
+    }, [filterOpenTime])
     
+    useEffect(() => {
+        AsyncStorage.setItem('establishment_filterCloseTime', filterCloseTime.toString());
+    }, [filterCloseTime])
+
 
     return (
        <>
@@ -187,20 +224,20 @@ const Estabelecimentos = (props) => {
                 <View style={{flex: 1}}>
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                         <Picker
-                            selectedValue={filterOpenTime}
+                            selectedValue={filterSport}
                             style={{flex: 1, color: '#666'}}
                             mode='dropdown'
                             onValueChange={(v) => {
-                                if (v != filterEsporte) {
-                                    setFilterEsporte(v);
+                                if (v != filterSport) {
+                                    setFilterSport(v);
                                 }
                             }}
                         >
-                            <Picker.Item label="Baqueste" value="basquete" />
-                            <Picker.Item label="Futebol Society" value="futebolsociety" />
-                            <Picker.Item label="Futsal" value="futsal" />
-                            <Picker.Item label="Paintball" value="paintball" />
-                            <Picker.Item label="Volêi" value="volei" />
+                            <Picker.Item label="Selecione um esporte" value={0} />
+                            {sports && sports.map((v,i) => (
+                                <Picker.Item key={i} label={v.name} value={v.id} />
+
+                            ))}
                         </Picker>
                     </View>
                 </View>
@@ -242,16 +279,14 @@ const Estabelecimentos = (props) => {
                 let closeTime = new Date();
                 closeTime.setHours(i.close_hours.substring(0,2) -3, i.close_hours.substring(3,5), "00", "00");
 
-                console.log(openTime, filterOpen)
-                console.log(closeTime, filterClose)
                 if (i.name.toLowerCase().includes(filter.toLowerCase())
                     && openTime <= filterOpen 
                     && closeTime >= filterClose
-                    && (filterEsporte == '' || i.esportes.includes(filterEsporte))
+                    && hasSportFiltered(i, filterSport)
                     //&& (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
-                    <Estabelecimento key={k} onPress={() => props.navigation.dispatch(StackActions.push('EstabelecimentoDetalhe', { user: 'Wojtek' }))}>
+                    <Estabelecimento key={k} onPress={() => props.navigation.dispatch(StackActions.push('EstabelecimentoDetalhe', { id: i.id }))}>
                         <View>
                             <Word fsize="20px">{i.name}</Word>
                         </View>

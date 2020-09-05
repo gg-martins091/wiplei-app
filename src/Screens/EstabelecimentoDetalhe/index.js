@@ -1,12 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { HeaderContainer, EspacosContainer, Espaco } from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Api from '../../Service';
 
-
-const EstabelecimentoDetalhe = () => {
+const EstabelecimentoDetalhe = ({route}) => {
     let [infoExpanded, setInfoExpanded] = useState(false);
+    let [establishment, setEstablishment] = useState({});
 
+    useEffect(() => {
+        async function getEstablishment() {
+            const es = await Api.get(`/establishments/${route.params.id}`);
+            console.log(es);
+        }
+    }, []);
     return (
         <View>
             <HeaderContainer>
