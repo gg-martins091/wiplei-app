@@ -1,5 +1,5 @@
 import React, {useReducer, useEffect, useMemo} from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,9 +14,9 @@ const Stack = createStackNavigator();
 
 function SplashScreen() {
     return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
+        <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator color="#f4511e" size={80}></ActivityIndicator>
+        </View>
     );
   }
 
@@ -80,10 +80,7 @@ export default function App({ navigation }) {
           // This will switch to the App screen or Auth screen and this loading
           // screen will be unmounted and thrown away.
           if (user) {
-            Api.interceptors.request.use(async config => {
-                config.headers.Authorization = `Bearer ${user.token}`;
-                return config;
-            });
+            
             dispatch({ type: 'RESTORE_TOKEN', token: user.token, id: user.id, name: user.name, surname: user.surname });
           }
         };
@@ -109,7 +106,6 @@ export default function App({ navigation }) {
                     name: data.user.name,
                     surname: data.user.surname
                 };
-                
                 AsyncStorage.setItem('userInfo', JSON.stringify(d)).then(x => {
                     dispatch({ type: 'SIGN_IN', token: data.token, id: data.user.id, name: data.user.name, surname: data.user.surname });
                 });
@@ -140,7 +136,9 @@ export default function App({ navigation }) {
             <Stack.Navigator>
                 {state.isLoading ? (
                 // We haven't finished checking for the token yet
-                <Stack.Screen name="Splash" component={SplashScreen} />
+                <Stack.Screen options={{
+                    headerShown: false,
+                }} name="Splash" component={SplashScreen} />
                 ) : state.userToken == null ? (
                 // No token found, user isn't signed in
                 <Stack.Screen
