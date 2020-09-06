@@ -107,7 +107,7 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                 </HeaderContainer>
                 <EspacosContainer>
                     {establishment.spaces && establishment.spaces.map((v, i) => (
-                        <Espaco key={i}>
+                        <Espaco key={i} onPress={() => navigation.push('EspacoDetalhe', { id: v.id, title: v.name })}>
                             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Text style={{fontSize: 20, color: '#f4511e'}}>
                                     {v.name}

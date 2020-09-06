@@ -12,7 +12,6 @@ import {
     FilterFormContainer,
     FilterInputView,
 } from './styles';
-import { StackActions } from '@react-navigation/native';
 import Api from '../../Service';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -80,7 +79,7 @@ function hasSportFiltered(e, filter) {
     return false;
 }
 
-const Estabelecimentos = (props) => {
+const Estabelecimentos = ({navigation}) => {
     let [items, setItems] = useState([]);
     let [filterOpen, setFilterOpen] = useState(false);
     let [filter, setFilter] = useState('');
@@ -286,7 +285,7 @@ const Estabelecimentos = (props) => {
                     //&& (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
-                    <Estabelecimento key={k} onPress={() => props.navigation.dispatch(StackActions.push('EstabelecimentoDetalhe', { id: i.id }))}>
+                    <Estabelecimento key={k} onPress={() => navigation.push('EstabelecimentoDetalhe', { id: i.id })}>
                         <View>
                             <Word fsize="20px">{i.name}</Word>
                         </View>

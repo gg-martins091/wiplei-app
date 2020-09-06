@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -7,6 +7,7 @@ import Descubra from '../Descubra';
 import Alugueis from '../Alugueis';
 import Aluguel from '../AluguelDetalhe';
 import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
+import EspacoDetalhe from '../EspacoDetalhe';
 import LogoutHeader from '../../Components/LogoutHeader';
 
 const Tab = createBottomTabNavigator();
@@ -109,6 +110,23 @@ function MainStackComponent(props) {
             >
                 {props => <EstabelecimentoDetalhe {...props} user={propsState.user}/>}
             </MainStack.Screen>
+
+            <MainStack.Screen 
+                name="EspacoDetalhe"
+                options={({route}) => ({
+                    headerRight: () => (
+                        <LogoutHeader />
+                    ),
+                    headerTitle: (props) => {
+                      return (
+                          <Text style={{fontSize: 22, color: '#fff'}}>{route.params.title.substring(0, 25)}</Text>
+                      )
+                    },
+                })}
+            >
+                {props => <EspacoDetalhe {...props} user={propsState.user}/>}
+            </MainStack.Screen>
+
         </MainStack.Navigator>
     );
 }
