@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TextInput, TouchableOpacity} from 'react-native';
+import { View, Image, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Slider from '@react-native-community/slider';
-import {Picker} from '@react-native-community/picker';
-import LogoutHeader from '../../Components/LogoutHeader';
 import {
     ScrollContainer,
     AluguelBox,
     Word,
-    FilterContainer,
-    FilterButton,
-    FilterFormContainer,
-    FilterInputView,
-    FilterFormInput
 } from './styles';
 import Api from '../../Service';
+import { format } from 'date-fns';
+
 
 const AlugueisStack = createStackNavigator();
 
@@ -25,49 +19,49 @@ const Alugueis = (props) => {
     useEffect(() => {
         async function getAlugueis() {
             const data = await Api.get('rents');
-            console.log(data.data);
+            setItems(data.data);
         }
-        
+        getAlugueis();
     }, []);
     
     return (
-            <ScrollContainer>
-            {items.length < 1 && <Text>Não há estabalecimentos para serem exibidos.</Text>}
-            {items.length > 0 && items.map((i, k) => {
-                if (i.name.toLowerCase().includes(filter.toLowerCase())
-                    && i.openTime >= filterOpenTime 
-                    && i.closeTime >= filterCloseTime
-                    && (filterEsporte == '' || i.esportes.includes(filterEsporte))
-                    && (filterDistance >= 15 || i.distance < filterDistance)
-                    ) {
-                    return (
-                    <AluguelBox key={k} onPress={() => props.navigation.push('AluguelDetalhe', {chatId: i.chatId})}>
-                        <View>
-                            <Word fsize="20px">{i.name}</Word>
-                        </View>
-                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
-                                <View style={{display: 'flex', flexDirection: 'row'}}>
-                                    <Icon name="star" size={20} color="#f4511e" />
-                                    <Word fsize="14px" fcolor="#666">{i.rating}</Word>
-                                    <Word style={{marginLeft: 20}} fsize="14px" fcolor="#666">{i.distance}km</Word>
-                                </View>
-                                <View style={{marginTop: 10}}>
-                    
-                                    <Word fsize="14px" fcolor="#666">09/10/2020 16:30</Word>
-                                </View>
-                                <View style={{marginTop: 10}}>
-                                    <Word fsize="18px" fcolor="#222">{i.address}</Word>
-                                </View>
+        <ScrollContainer>
+        {items.length < 1 && <Text>Não há estabalecimentos para serem exibidos.</Text>}
+        
+        {items.length > 0 &&
+            <Text style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você tem {items.length} aluguéis.</Text>
+        }
+        
+        {items.length > 0 && items.map((i, k) => {
+            return (
+                <AluguelBox key={k} onPress={() => props.navigation.push('AluguelDetalhe', {id: i.id, chatId: i.chatId})}>
+                    <View>
+                        <Word fsize="20px">{i.schedule.space.establishment.name}</Word>
+                    </View>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
+                            <View style={{display: 'flex', flexDirection: 'row'}}>
+                                <Icon name="star" size={20} color="#f4511e" />
+                                <Word fsize="14px" fcolor="#666">{i.schedule.space.establishment.stars}</Word>
                             </View>
-                            <Icon name="chat" size={50} color="#f4511e" style={{marginRight: 30}}/>
-                        </View>
-                    </AluguelBox>)
-                }
+                            <View style={{marginTop: 10}}>
                 
-            })
-            }
-        </ScrollContainer>
+                                <Word fsize="14px" fcolor="#666">{format(new Date(i.rent_date), 'dd/MM/yyyy')} {i.schedule.init_hour.substring(0,5)} - {i.schedule.finish_hour.substring(0,5)}</Word>
+                                
+                            </View>
+                            <View style={{marginTop: 10}}>
+                                <Word fsize="18px" fcolor="#222">{i.schedule.space.establishment.address}</Word>
+                            </View>
+                        </View>
+                        <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{
+                            uri: `${Api.defaults.baseURL}files/${i.schedule.space.establishment.avatar.path}`
+                        }} />
+                    </View>
+                </AluguelBox>
+            )
+        })
+        }
+    </ScrollContainer>
     );
 }
 
