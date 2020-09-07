@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ActivityIndicator, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Api from '../../Service';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import {getMonth, getYear} from 'date-fns';
+import { getDay, getMonth, getYear, parseISO } from 'date-fns';
 import { HeaderContainer } from './styles';
+import {Picker} from '@react-native-community/picker';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+
 
 LocaleConfig.locales['br'] = {
     monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
@@ -33,6 +37,10 @@ const months = {
 const EspacoDetalhe = ({route}) => {
     const [details, setDetails] = useState();
     const [selected, setSelected] = useState('');
+    const [schedules, setSchedules] = useState([]);
+    const [selectedDayOfWeek, setSelectedDayOfWeekState] = useState();
+    const [selectedSchedule, setSelectedSchedule] = useState();
+    const [daySchedules, setDaySchedules] = useState([]);
 
     useEffect(() => {
         async function getDetails() {
@@ -40,6 +48,7 @@ const EspacoDetalhe = ({route}) => {
                 const d = await Api.get(`/spaces/${route.params.id}`);
                 if (d) {
                     setDetails(d.data);
+                    setSchedules(d.data.schedule);
                 } else {
                     Toast.show('Ooops! Algo deu errado.', {
                         duration: Toast.durations.SHORT,
@@ -65,9 +74,15 @@ const EspacoDetalhe = ({route}) => {
 
     }, [])
 
+    async function setSelectedDayOfWeek(d, day) {
+        setSelectedDayOfWeekState(d);
+        const schedules = await Api.get(`schedules/available/${route.params.id}/${d}/${day}`);
+        setDaySchedules(schedules.data);
+    }
+
     if (details) {
         return (
-            <View>
+            <View style={{backgroundColor: '#fff', height: '100%'}}>
                 <HeaderContainer>
                     <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${details.avatar.path}`}} />
                     <Text style={{fontSize: 22, color: '#f4511e'}}>{details.name}</Text>
@@ -79,7 +94,10 @@ const EspacoDetalhe = ({route}) => {
                 <Calendar
                     current={new Date()}
                     minDate={new Date()}
-                    onDayPress={(day) => {setSelected(day.dateString)}}
+                    onDayPress={(day) => {
+                        setSelectedDayOfWeek(getDay(parseISO(day.dateString)), day.dateString);
+                        setSelected(day.dateString);
+                    }}
                     onDayLongPress={(day) => {console.log('selected day', day)}}
                     monthFormat={'yyyy MM'}
                     onMonthChange={(month) => {console.log('month changed', month)}}
@@ -121,7 +139,87 @@ const EspacoDetalhe = ({route}) => {
                     }}
                     enableSwipeMonths={true}
                 />
+                
+                {daySchedules.length == 0 && 
+                    <View style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 'auto',
+                        paddingTop: 50
+                    }}>
+                        <Text style={{
+                            color: "#f4511e",
+                            fontSize: 16
+                        }}>Selecione um dia para ver os horários disponíveis.</Text>
+                    </View>
+                }
+                
+                {daySchedules.length > 0 &&
+                    <View style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingTop: 30,
+                        backgroundColor: '#fff'
+                    }}>
+                        <View style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                        }}>
+                            <Text style={{
+                                color: "#f4511e",
+                                fontSize: 16,
+                                paddingTop: 12,
+                                marginRight: 10
+                            }}>Horário: </Text>
+                            <Picker
+                                mode="dialog"
+                                selectedValue={selectedSchedule}
+                                style={{
+                                    height: 50,
+                                    color: '#666',
+                                    textAlign: 'center',
+                                    marginBottom: 30,
+                                    width:190,
+                                    borderRadius: 20,
 
+                                }}
+                                mode='dropdown'
+                                onValueChange={(v) => {
+                                    if (v != selectedSchedule) {
+                                        setSelectedSchedule(v);
+                                    }
+                                }}
+                                key={schedules.length}
+                            >
+                                <Picker.Item key={999} label="Selecione" value={0} />
+                                {daySchedules.map((v,i) => {
+                                    if (v.available == true) {
+                                        return (<Picker.Item key={i} label={`${v.init_hour.substring(0, 5)} - ${v.finish_hour.substring(0,5)}`} value={v.schedule_id} />)
+                                    }
+                                })}
+                            </Picker>
+                        </View>
+                        <TouchableOpacity
+                            style={{
+                                borderRadius: 20,
+                                paddingVertical: 10,
+                                paddingHorizontal: 20,
+                                backgroundColor: '#f4511e'
+                            }}
+                            onPress={() => {
+                                if (selectedSchedule && selected) {
+                                    console.log(selectedDayOfWeek ,selectedSchedule, selected);
+                                }
+                            }}
+
+                        >
+                            <Text style={{color: 'white'}}>Alugar</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                }
             </View>
         );
     } else {
