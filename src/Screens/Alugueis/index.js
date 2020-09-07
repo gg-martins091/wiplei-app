@@ -15,122 +15,21 @@ import {
     FilterInputView,
     FilterFormInput
 } from './styles';
-import { StackActions } from '@react-navigation/native';
+import Api from '../../Service';
 
 const AlugueisStack = createStackNavigator();
 
 const Alugueis = (props) => {
     let [items, setItems] = useState([]);
-    let [filterOpen, setFilterOpen] = useState(false);
-    let [filter, setFilter] = useState('');
-    let [filterDistance, setFilterDistance] = useState(5);
-    let [filterOpenTime, setFilterOpenTime] = useState(8);
-    let [filterCloseTime, setFilterCloseTime] = useState(22);
-    let [filterEsporte, setFilterEsporte] = useState('');
 
     useEffect(() => {
-        /* setItems([
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-            {
-                name: 'KTrop Paintball e Airsoft',
-                rating: 4.5,
-                distance: 6.2,
-                openTime: '8',
-                closeTime: '21',
-                address: 'Avenida Mirudsdsdsdsdsdsdsdsna, 204',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-            },
-            {
-                name: 'Eleven Futebol',
-                rating: 4.9,
-                distance: 3.3,
-                openTime: '9',
-                closeTime: '24',
-                address: 'Rua dos Gansos, 982',
-                img: require('../../../assets/futebol.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-            {
-                name: 'Quadras de Basquete C8',
-                rating: 4.1,
-                distance: 4.9,
-                openTime: '9',
-                closeTime: '20',
-                address: 'Rua Clemente Pereira, 1870',
-                img: require('../../../assets/paintball.jpg'),
-                chatId: 'YEjIPNmCtGBPBdRXICrX'
-
-            },
-
-        ]) */
+        async function getAlugueis() {
+            const data = await Api.get('rents');
+            console.log(data.data);
+        }
+        
     }, []);
     
-
     return (
             <ScrollContainer>
             {items.length < 1 && <Text>Não há estabalecimentos para serem exibidos.</Text>}
@@ -142,7 +41,7 @@ const Alugueis = (props) => {
                     && (filterDistance >= 15 || i.distance < filterDistance)
                     ) {
                     return (
-                    <AluguelBox key={k} onPress={() => props.navigation.dispatch(() => StackActions.push('AluguelDetalhe', {chatId: i.chatId}))}>
+                    <AluguelBox key={k} onPress={() => props.navigation.push('AluguelDetalhe', {chatId: i.chatId})}>
                         <View>
                             <Word fsize="20px">{i.name}</Word>
                         </View>
@@ -173,32 +72,5 @@ const Alugueis = (props) => {
 }
 
 
-const AlugueisStackComponent = () => {
-    return (
-        <AlugueisStack.Navigator
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor: '#f4511e',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    paddingRight: 50,
-                },
-            }}
-        >
-            <AlugueisStack.Screen 
-                name="AlugueisHome"
-                component={Alugueis} 
-                options={{
-                    title: 'Wiplei',
-                    headerRight: () => (
-                        <LogoutHeader />
-                    )
-                }}
-            />
-            
-        </AlugueisStack.Navigator>
-    );
-}
 
-export default AlugueisStackComponent;
+export default Alugueis;
