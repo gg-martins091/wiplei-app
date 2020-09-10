@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -14,25 +14,29 @@ import { format } from 'date-fns';
 const AlugueisStack = createStackNavigator();
 
 const Alugueis = (props) => {
-    let [items, setItems] = useState([]);
+    let [items, setItems] = useState();
 
     useEffect(() => {
         async function getAlugueis() {
             const data = await Api.get('rents');
-            setItems(data.data);
+            setItems(data.data || []);
         }
         getAlugueis();
     }, []);
     
     return (
         <ScrollContainer>
-        {items.length < 1 && <Text>Não há estabalecimentos para serem exibidos.</Text>}
+        {!items && 
+            <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator color="#f4511e" size={80}></ActivityIndicator>
+            </View>
+        }
         
-        {items.length > 0 &&
+        {items && items.length > 0 &&
             <Text style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você tem {items.length} aluguéis.</Text>
         }
         
-        {items.length > 0 && items.map((i, k) => {
+        {items && items.length > 0 && items.map((i, k) => {
             return (
                 <AluguelBox key={k} onPress={() => props.navigation.push('AluguelDetalhe', {id: i.id, chatId: i.chatId})}>
                     <View>

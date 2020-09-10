@@ -14,6 +14,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import Firestore from '@react-native-firebase/firestore';
 import {format, getMonth, getDay} from 'date-fns';
+import Api from '../../Service';
 
 const months = ['Jan','Fev.','MAr','Abr','Mai','Jun','Jul','Ago','Set.','Out','Nov','Dez'];
 
@@ -21,9 +22,20 @@ const months = ['Jan','Fev.','MAr','Abr','Mai','Jun','Jul','Ago','Set.','Out','N
 const Aluguel = ({user, route}) => {
     const [msgs, setMsgs] = useState([]);
     const [msg, setMsg] = useState('');
+    const [details, setDetails] = useState();
 
     useEffect(() => {
-        
+        async function getDetails() {
+            try {
+                const data = await Api.get(`rents/${route.params.id}`);
+                console.log(data.data);
+                setDetails(data.data);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        getDetails();
+
         const unsubscribe = Firestore().collection('chat').doc(route.params.chatId).collection('msgs').onSnapshot(snap => {
             if (snap && !snap.empty) {
                 const data = snap.docs.map(doc => doc.data())
