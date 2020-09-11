@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, ActivityIndicator } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
     ScrollContainer,
@@ -9,9 +8,6 @@ import {
 } from './styles';
 import Api from '../../Service';
 import { format } from 'date-fns';
-
-
-const AlugueisStack = createStackNavigator();
 
 const Alugueis = (props) => {
     let [items, setItems] = useState();

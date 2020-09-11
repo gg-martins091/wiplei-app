@@ -5,6 +5,7 @@ export const Header = styled.View`
     background-color: #fff;
     display: flex;
     flex-direction: column;
+    
 `;
 
 export const DateBox = styled.View`

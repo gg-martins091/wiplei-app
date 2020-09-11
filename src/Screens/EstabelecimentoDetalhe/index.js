@@ -20,6 +20,7 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                     closeTime.setHours(es.data.close_hours.substring(0,2) -3, es.data.close_hours.substring(3,5), "00", "00");
                     let now = new Date();
                     now.setSeconds("00", "00");
+                    now.setHours(now.getHours() - 3);
 
                     setEstablishment({...es.data, open: now >= openTime && now < closeTime});
                 } else {
@@ -62,13 +63,14 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                             </View>
                         }
                     </View>
-                    <View style={{display: 'flex', flexDirection: 'row', marginTop: 10, marginBottom: 20, justifyContent: 'space-between', alignItems: 'center'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', alignItems: 'center'}}>
                         <Text style={{marginRight: 20, fontSize: 16, color: '#888'}}>{establishment.name}</Text>
                         <View style={{display: 'flex', flexDirection: 'row'}}>
                             <Icon name="star" size={20} color="#f4511e" />
                             <Text style={{fontSize: 12, color: '#888', textAlign: 'center'}}>{establishment.stars}</Text>
                         </View>
                     </View>
+                                
                     {!establishment.open && 
                         <View style={{borderRadius: 5, display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(100,255,100,0.3)', padding: 10, alignItems: 'center'}}>
                             <View style={{display: 'flex', flexDirection: 'row'}}>
@@ -97,6 +99,10 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                             <View style={{display: 'flex', flexDirection: 'row', marginBottom: 8}}>
                                 <Icon name="phone-outline" size={20} color="#f4511e" style={{marginRight: 10}}/>
                                 <Text style={{fontSize: 14, color: '#666'}}>{establishment.contact}</Text>
+                            </View>
+                            <View style={{display: 'flex', flexDirection: 'row', marginBottom: 8}}>
+                                <Icon name="clock-outline" size={20} color="#f4511e" style={{marginRight: 10}}/>
+                                <Text style={{fontSize: 14, color: '#666'}}>{establishment.open_hours.substring(0,5)} às {establishment.close_hours.substring(0,5)}</Text>
                             </View>
                         </View>
                         <TouchableOpacity style={{padding: 5}} onPress={() => setInfoExpanded(!infoExpanded)}>
