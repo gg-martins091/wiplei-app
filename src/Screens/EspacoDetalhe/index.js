@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Image, Dimensions } from 'react-native';
+import { View, Text, ActivityIndicator, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Api from '../../Service';
 import {Calendar, LocaleConfig} from 'react-native-calendars';

@@ -37,7 +37,6 @@ const Aluguel = ({user, route}) => {
 
     async function getInvitesSent() {
         const data = await Api.get(`/rent-invite/${route.params.id}`);
-        console.log(data.data);
         setInvitesSent(data.data);
     }
     
@@ -84,25 +83,27 @@ const Aluguel = ({user, route}) => {
                         </View>
                     </TitleBox>
                 </HeaderTop>
-                <View>
-                    <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
-                        onPress={async () => {
-                            const oldChat = chat;
-                            setChat(!chat)
-                            if (!oldChat) {
-                                const data = await Api.get(`/rents/users/not/${route.params.id}`);
-                                setInviteList(data.data || []);
-                                setInvitesDone([]);
-                                setInvitesLoading([]);
-                                const invitesSentData = await Api.get(`/rent-invite/${route.params.id}`);
-                                setInvitesSent(invitesSentData.data); 
+                {route.params.isOwner &&
+                    <View>
+                        <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
+                            onPress={async () => {
+                                const oldChat = chat;
+                                setChat(!chat)
+                                if (!oldChat) {
+                                    const data = await Api.get(`/rents/users/not/${route.params.id}`);
+                                    setInviteList(data.data || []);
+                                    setInvitesDone([]);
+                                    setInvitesLoading([]);
+                                    const invitesSentData = await Api.get(`/rent-invite/${route.params.id}`);
+                                    setInvitesSent(invitesSentData.data); 
+                                }
+                                
                             }
-                            
-                        }
-                        }>
-                        <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> {chat ? 'Convidar pessoas' : 'Voltar ao chat'} </Text>
-                    </TouchableOpacity>
-                </View>
+                            }>
+                            <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> {chat ? 'Convidar pessoas' : 'Voltar ao chat'} </Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             </Header>
 
             {!chat &&
