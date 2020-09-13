@@ -36,15 +36,36 @@ const Alugueis = (props) => {
         }
         
         { items && items.length == 0 &&
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 10,
+                marginBottom: 20
+            }}>
             <Text 
                 onPress={() => getAlugueis()}
                 style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você não tem nenhum {props.isInvite ? 'convite' : 'aluguél'}.</Text>
+                <Icon name="refresh" color="#f4511e" size={20} />
+            </View>
         }
         
         {items && items.length > 0 &&
-            <Text 
-            onPress={() => getAlugueis()}
-            style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você tem {items.length} {props.isInvite ? items.length == 1 ? 'convite' : 'convites' : items.length == 1 ? 'aluguél' : 'aluguéis'}.</Text>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 10,
+                marginBottom: 20
+            }}>
+                <Text 
+                onPress={() => getAlugueis()}
+                style={{textAlign: 'center', color: '#f4511e', marginRight: 10}}>Você tem {items.length} {props.isInvite ? items.length == 1 ? 'convite' : 'convites' : items.length == 1 ? 'aluguél' : 'aluguéis'}.
+                </Text>
+                <Icon name="refresh" color="#f4511e" size={20} />
+            </View>
         }
         
         {items && items.length > 0 && items.map((i, k) => {
