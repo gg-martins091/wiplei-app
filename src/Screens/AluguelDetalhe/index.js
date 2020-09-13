@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { 
     Header,
@@ -12,10 +12,11 @@ import {
     ChatInputContainer 
 } from './styles';
 import Firestore from '@react-native-firebase/firestore';
-import {format, getMonth, getDay} from 'date-fns';
+import {format, getMonth} from 'date-fns';
 import Api from '../../Service';
-import { ScrollView } from 'react-native-gesture-handler';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+const InviteTab = createMaterialTopTabNavigator();
 const months = ['Jan','Fev','MAr','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 
@@ -24,19 +25,25 @@ const Aluguel = ({user, route}) => {
     const [msg, setMsg] = useState('');
     const [details, setDetails] = useState();
     const [chat, setChat] = useState(true);
+    const [inviteList, setInviteList] = useState([]);
+    const [invitesLoading, setInvitesLoading] = useState([]);
+    const [invitesDone, setInvitesDone] = useState([]);
 
     useEffect(() => {
         async function getDetails() {
             try {
-                console.log(`rents/${route.params.id}`);
                 const data = await Api.get(`rents/${route.params.id}`);
-                console.log(data.data);
                 setDetails(data.data);
             } catch (e) {
-                console.log(e);
             }
         }
         getDetails();
+
+        async function getInviteList() {
+            const data = await Api.get(`/rents/users/not/${route.params.id}`);
+            setInviteList(data.data || []);
+        }
+        getInviteList();
 
         const unsubscribe = Firestore().collection('chat').doc(route.params.chatId).collection('msgs').onSnapshot(snap => {
             if (snap && !snap.empty) {
@@ -72,17 +79,106 @@ const Aluguel = ({user, route}) => {
                         <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> Aceitar </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
-                        onPress={() => setChat(!chat)}>
+                        onPress={async () => {
+                            if (!chat) {
+                                const data = await Api.get(`/rents/users/not/${route.params.id}`);
+                                setInviteList(data.data || []);
+                                setInvitesDone([]);
+                                setInvitesLoading([]);
+                            }
+                            setChat(!chat)}
+                        }>
                         <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> {chat ? 'Convidar pessoas' : 'Voltar ao chat'} </Text>
                     </TouchableOpacity>
                 </View>
             </Header>
 
             {!chat &&
-                <ScrollView>
-                    <Text>opa</Text>
-                </ScrollView>
+                <Chat style={{
+                    paddingTop: 10,
+                    paddingBottom: 10
+                }}>
+                    {!inviteList || inviteList.length == 0 && 
+                        <Text>Não existem usuários disponíveis para convidar.</Text>
+                    }
+
+                    {inviteList.length > 0 && inviteList.map((v,i) => (
+                        <View key ={i} style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            padding: 10,
+                            marginBottom: 10 
+                        }}>
+                            <Text>{v.name} {v.surname}</Text>
+                            {!invitesLoading.includes(i) && !invitesDone.includes(i) &&
+                                <TouchableOpacity
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                    onPress={async () => {
+                                        setInvitesLoading([...invitesLoading, i]);
+                                        try {
+                                            const d = await Api.post(`rent-invite`, {
+                                                rent_id: route.params.id,
+                                                user_id: v.id
+                                            });
+
+                                            if (d.data.id) {
+                                                const invitesLoadingNew = invitesLoading.filter(x => {
+                                                    return x != i
+                                                });
+                                                setInvitesLoading(invitesLoadingNew);
+                                                setInvitesDone([...invitesDone, i]);
+                                            }
+                                        } catch (er) {
+                                            console.log(Object.keys(er));
+                                            const invitesLoadingNew = invitesLoading.filter(x => {
+                                                return x != i
+                                            });
+                                            setInvitesLoading(invitesLoadingNew);
+                                        }
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}>Convidar</Text>
+                                </TouchableOpacity>
+                            }
+
+                            {invitesLoading.includes(i) &&
+                                <View
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                >
+                                    <ActivityIndicator color="white"></ActivityIndicator>
+                                </View>
+                            }
+
+                            {invitesDone.includes(i) && 
+                                <View
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                >
+                                   <Icon 
+                                        name="check-bold" color="white" size={20} />
+                                </View>
+                            }
+                        </View>
+                    ))
+                    }
+                </Chat>
             }
+
+            
             {chat &&
             <>
                 <Chat 
