@@ -28,7 +28,19 @@ const Aluguel = ({user, route}) => {
     const [inviteList, setInviteList] = useState([]);
     const [invitesLoading, setInvitesLoading] = useState([]);
     const [invitesDone, setInvitesDone] = useState([]);
+    const [invitesSent, setInvitesSent] = useState([]);
 
+    async function getInviteList() {
+        const data = await Api.get(`/rents/users/not/${route.params.id}`);
+        setInviteList(data.data || []);
+    }
+
+    async function getInvitesSent() {
+        const data = await Api.get(`/rent-invite/${route.params.id}`);
+        console.log(data.data);
+        setInvitesSent(data.data);
+    }
+    
     useEffect(() => {
         async function getDetails() {
             try {
@@ -38,12 +50,9 @@ const Aluguel = ({user, route}) => {
             }
         }
         getDetails();
-
-        async function getInviteList() {
-            const data = await Api.get(`/rents/users/not/${route.params.id}`);
-            setInviteList(data.data || []);
-        }
         getInviteList();
+        getInvitesSent();
+        
 
         const unsubscribe = Firestore().collection('chat').doc(route.params.chatId).collection('msgs').onSnapshot(snap => {
             if (snap && !snap.empty) {
@@ -53,6 +62,7 @@ const Aluguel = ({user, route}) => {
         });
         return () => unsubscribe();
     }, [])
+
 
     const scrollViewRef = useRef();
     if (details) {
@@ -75,18 +85,20 @@ const Aluguel = ({user, route}) => {
                     </TitleBox>
                 </HeaderTop>
                 <View>
-                    <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}>
-                        <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> Aceitar </Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
                         onPress={async () => {
-                            if (!chat) {
+                            const oldChat = chat;
+                            setChat(!chat)
+                            if (!oldChat) {
                                 const data = await Api.get(`/rents/users/not/${route.params.id}`);
                                 setInviteList(data.data || []);
                                 setInvitesDone([]);
                                 setInvitesLoading([]);
+                                const invitesSentData = await Api.get(`/rent-invite/${route.params.id}`);
+                                setInvitesSent(invitesSentData.data); 
                             }
-                            setChat(!chat)}
+                            
+                        }
                         }>
                         <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> {chat ? 'Convidar pessoas' : 'Voltar ao chat'} </Text>
                     </TouchableOpacity>
@@ -94,88 +106,148 @@ const Aluguel = ({user, route}) => {
             </Header>
 
             {!chat &&
-                <Chat style={{
-                    paddingTop: 10,
-                    paddingBottom: 10
-                }}>
-                    {!inviteList || inviteList.length == 0 && 
-                        <Text>Não existem usuários disponíveis para convidar.</Text>
-                    }
-
-                    {inviteList.length > 0 && inviteList.map((v,i) => (
-                        <View key ={i} style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            backgroundColor: 'white',
-                            padding: 10,
-                            marginBottom: 10 
+                <InviteTab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
+                    <InviteTab.Screen name="Invites" options={{
+                        title: 'Convidar'
+                    }} children={ props => 
+                    
+                        <Chat {...props} style={{
+                            paddingTop: 10,
+                            paddingBottom: 10
                         }}>
-                            <Text>{v.name} {v.surname}</Text>
-                            {!invitesLoading.includes(i) && !invitesDone.includes(i) &&
-                                <TouchableOpacity
-                                    style={{
-                                        borderRadius: 5,
-                                        backgroundColor: '#f4511e',
-                                        padding: 5
-                                    }}
-                                    onPress={async () => {
-                                        setInvitesLoading([...invitesLoading, i]);
-                                        try {
-                                            const d = await Api.post(`rent-invite`, {
-                                                rent_id: route.params.id,
-                                                user_id: v.id
-                                            });
+                            {!inviteList || inviteList.length == 0 && 
+                                <Text>Não existem usuários disponíveis para convidar.</Text>
+                            }
 
-                                            if (d.data.id) {
-                                                const invitesLoadingNew = invitesLoading.filter(x => {
-                                                    return x != i
+                            {inviteList.length > 0 && inviteList.map((v,i) => (
+                                <View key ={i} style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    padding: 10,
+                                    marginBottom: 10 
+                                }}>
+                                    <Text>{v.name} {v.surname}</Text>
+                                    {!invitesLoading.includes(i) && !invitesDone.includes(i) &&
+                                        <TouchableOpacity
+                                            style={{
+                                                borderRadius: 5,
+                                                backgroundColor: '#f4511e',
+                                                padding: 5
+                                            }}
+                                            onPress={async () => {
+                                                setInvitesLoading([...invitesLoading, i]);
+                                                try {
+                                                    const d = await Api.post(`rent-invite`, {
+                                                        rent_id: route.params.id,
+                                                        user_id: v.id
+                                                    });
+
+                                                    if (d.data.id) {
+                                                        const invitesLoadingNew = invitesLoading.filter(x => {
+                                                            return x != i
+                                                        });
+                                                        setInvitesLoading(invitesLoadingNew);
+                                                        setInvitesDone([...invitesDone, i]);
+                                                    }
+                                                } catch (er) {
+                                                    console.log(Object.keys(er));
+                                                    const invitesLoadingNew = invitesLoading.filter(x => {
+                                                        return x != i
+                                                    });
+                                                    setInvitesLoading(invitesLoadingNew);
+                                                }
+                                            }}
+                                        >
+                                            <Text style={{ color: 'white' }}>Convidar</Text>
+                                        </TouchableOpacity>
+                                    }
+
+                                    {invitesLoading.includes(i) &&
+                                        <View
+                                            style={{
+                                                borderRadius: 5,
+                                                backgroundColor: '#f4511e',
+                                                padding: 5
+                                            }}
+                                        >
+                                            <ActivityIndicator color="white"></ActivityIndicator>
+                                        </View>
+                                    }
+
+                                    {invitesDone.includes(i) && 
+                                        <View
+                                            style={{
+                                                borderRadius: 5,
+                                                backgroundColor: '#f4511e',
+                                                padding: 5
+                                            }}
+                                        >
+                                        <Icon 
+                                                name="check-bold" color="white" size={20} />
+                                        </View>
+                                    }
+                                </View>
+                            ))
+                            }
+                        </Chat>              
+                    } />
+
+                    <InviteTab.Screen name="InvitesSent" options={{
+                        title: 'Convites Enviados'
+                    }} children={ props => 
+                    
+                        <Chat {...props} style={{
+                            paddingTop: 10,
+                            paddingBottom: 10
+                        }}>
+                            {!invitesSent || invitesSent.length == 0 && 
+                                <Text>Não existem usuários convidados.</Text>
+                            }
+
+                            {invitesSent.length > 0 && invitesSent.map((v,i) => (
+                                <View key={i} style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    padding: 10,
+                                    marginBottom: 10 
+                                }}>
+                                    <Text>{v.name} {v.surname}</Text>
+                                    <TouchableOpacity
+                                        style={{
+                                            borderRadius: 5,
+                                            backgroundColor: '#f4511e',
+                                            padding: 5
+                                        }}
+                                        onPress={async () => {
+                                            try {
+                                                const d = await Api.post(`rent-invite/cancel`, {
+                                                    invite_id: v.invite_id
                                                 });
-                                                setInvitesLoading(invitesLoadingNew);
-                                                setInvitesDone([...invitesDone, i]);
+
+                                                if (d.data.success) {
+                                                    getInviteList();
+                                                    getInvitesSent();
+                                                }
+                                            } catch (er) {
                                             }
-                                        } catch (er) {
-                                            console.log(Object.keys(er));
-                                            const invitesLoadingNew = invitesLoading.filter(x => {
-                                                return x != i
-                                            });
-                                            setInvitesLoading(invitesLoadingNew);
-                                        }
-                                    }}
-                                >
-                                    <Text style={{ color: 'white' }}>Convidar</Text>
-                                </TouchableOpacity>
-                            }
-
-                            {invitesLoading.includes(i) &&
-                                <View
-                                    style={{
-                                        borderRadius: 5,
-                                        backgroundColor: '#f4511e',
-                                        padding: 5
-                                    }}
-                                >
-                                    <ActivityIndicator color="white"></ActivityIndicator>
+                                        }}
+                                    >
+                                        <Icon 
+                                            name="window-close" color="white" size={20} />
+                                    </TouchableOpacity>
                                 </View>
+                            ))
                             }
+                        </Chat>              
+                    } />
 
-                            {invitesDone.includes(i) && 
-                                <View
-                                    style={{
-                                        borderRadius: 5,
-                                        backgroundColor: '#f4511e',
-                                        padding: 5
-                                    }}
-                                >
-                                   <Icon 
-                                        name="check-bold" color="white" size={20} />
-                                </View>
-                            }
-                        </View>
-                    ))
-                    }
-                </Chat>
+                </InviteTab.Navigator>
             }
 
             

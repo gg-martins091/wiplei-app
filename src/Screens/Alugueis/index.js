@@ -8,6 +8,9 @@ import {
 } from './styles';
 import Api from '../../Service';
 import { format } from 'date-fns';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const Tabs = createMaterialTopTabNavigator();
 
 const Alugueis = (props) => {
     let [items, setItems] = useState();
@@ -65,6 +68,24 @@ const Alugueis = (props) => {
     );
 }
 
+function TabsComponent(props) {
+    const [propsState, setPropsState] = useState(props);
+    return (
+        <Tabs.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
+            <Tabs.Screen 
+                name="AlugueisListagem"
+                options={{
+                    title: 'Aluguéis'
+                }}
+                children={ props => <Alugueis isInvite={false} {...props} user={propsState.user} />} />
+            <Tabs.Screen 
+                name="AlugueisInvite"
+                options={{
+                    title: 'Convites'
+                }}
+                children={ props => <Alugueis isInvite={true} {...props} user={propsState.user} />} />
+        </Tabs.Navigator>
+    );
+}
 
-
-export default Alugueis;
+export default TabsComponent;

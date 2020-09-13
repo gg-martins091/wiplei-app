@@ -42,7 +42,6 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                     hideOnPress: true,
                 });
                 navigation.pop();
-                console.log(e);
             }
             
         }
@@ -134,7 +133,6 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                                         Clique aqui para alugar este espaço
                                     </Text>
                                 </View>
-                                {console.log(v.avatar)}
                                 <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${v.avatar.path}`}} />
                             </View>
                         </Espaco>

@@ -48,7 +48,7 @@ function Main(props) {
                     <Icon name="book" size={22} color={color} />
                 ),
                 tabBarLabel: ({focused, color}) => (
-                    <><Text style={{color: color}}>Meus</Text></>
+                    <><Text style={{color: color}}>Meus Alugueis</Text></>
                 )
                 //tabBarBadge: 3, 
             }}
