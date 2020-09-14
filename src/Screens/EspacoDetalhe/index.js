@@ -7,7 +7,7 @@ import { getDay, getMonth, getYear, parseISO } from 'date-fns';
 import { HeaderContainer } from './styles';
 import {Picker} from '@react-native-community/picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import { StackActions } from '@react-navigation/native';
 
 
 LocaleConfig.locales['br'] = {
@@ -34,7 +34,7 @@ const months = {
     11: 'Dezembro'
 }
 
-const EspacoDetalhe = ({route}) => {
+const EspacoDetalhe = ({navigation, route}) => {
     const [details, setDetails] = useState();
     const [selected, setSelected] = useState('');
     const [schedules, setSchedules] = useState([]);
@@ -77,7 +77,10 @@ const EspacoDetalhe = ({route}) => {
     async function setSelectedDayOfWeek(d, day) {
         setSelectedDayOfWeekState(d);
         const schedules = await Api.get(`schedules/available/${route.params.id}/${d}/${day}`);
-        setDaySchedules(schedules.data);
+        const data = schedules.data.filter(x => {
+            return x.available == true
+        });
+        setDaySchedules(data);
     }
 
     if (details) {
@@ -98,9 +101,7 @@ const EspacoDetalhe = ({route}) => {
                         setSelectedDayOfWeek(getDay(parseISO(day.dateString)), day.dateString);
                         setSelected(day.dateString);
                     }}
-                    onDayLongPress={(day) => {console.log('selected day', day)}}
                     monthFormat={'yyyy MM'}
-                    onMonthChange={(month) => {console.log('month changed', month)}}
                     hideArrows={false}
                     hideExtraDays={true}
                     firstDay={1}
@@ -195,22 +196,29 @@ const EspacoDetalhe = ({route}) => {
                             >
                                 <Picker.Item key={999} label="Selecione" value={0} />
                                 {daySchedules.map((v,i) => {
-                                    if (v.available == true) {
-                                        return (<Picker.Item key={i} label={`${v.init_hour.substring(0, 5)} - ${v.finish_hour.substring(0,5)}`} value={v.schedule_id} />)
-                                    }
+                                    return (<Picker.Item key={i} label={`${v.init_hour.substring(0, 5)} - ${v.finish_hour.substring(0,5)}`} value={v.schedule_id} />)
                                 })}
                             </Picker>
                         </View>
                         <TouchableOpacity
                             style={{
-                                borderRadius: 20,
+                                borderRadius: 5,
                                 paddingVertical: 10,
                                 paddingHorizontal: 20,
                                 backgroundColor: '#f4511e'
                             }}
-                            onPress={() => {
+                            onPress={async () => {
                                 if (selectedSchedule && selected) {
-                                    console.log(selectedDayOfWeek ,selectedSchedule, selected);
+                                    const data = await Api.post(`rents`, {
+                                        schedule_id: selectedSchedule,
+                                        rent_date: selected
+                                    });
+
+                                    if (data.data.id) {
+                                        navigation.dispatch(
+                                            StackActions.replace('Alugueis')
+                                        );
+                                    }
                                 }
                             }}
 

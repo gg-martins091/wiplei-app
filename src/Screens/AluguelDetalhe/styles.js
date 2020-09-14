@@ -40,6 +40,8 @@ export const HeaderTop = styled.View`
 export const Chat = styled.ScrollView`
     padding: 0px 12px;
     background-color: #f5f5f5;
+    padding-top: 10px;
+    padding-bottom: 10px;
 `
 
 export const ChatMsg = styled.View`

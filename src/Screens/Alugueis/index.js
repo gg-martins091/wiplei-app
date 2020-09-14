@@ -70,7 +70,7 @@ const Alugueis = (props) => {
         
         {items && items.length > 0 && items.map((i, k) => {
             return (
-                <AluguelBox key={k} onPress={props.isInvite ? null : () => props.navigation.push('AluguelDetalhe', {id: i.id, chatId: i.chatId, isOwner: i.owner_id == props.user.userId})}>
+                <AluguelBox key={k} onPress={props.isInvite ? null : () => props.navigation.push('AluguelDetalhe', {id: i.id, chat_id: i.chat_id})}>
                     <View>
                         <Word fsize="20px">{i.name}</Word>
                     </View>

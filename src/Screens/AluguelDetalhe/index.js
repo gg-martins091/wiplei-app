@@ -44,6 +44,7 @@ const Aluguel = ({user, route}) => {
         async function getDetails() {
             try {
                 const data = await Api.get(`rents/${route.params.id}`);
+                console.log(data.data, user.userId) 
                 setDetails(data.data);
             } catch (e) {
             }
@@ -53,7 +54,7 @@ const Aluguel = ({user, route}) => {
         getInvitesSent();
         
 
-        const unsubscribe = Firestore().collection('chat').doc(route.params.chatId).collection('msgs').onSnapshot(snap => {
+        const unsubscribe = Firestore().collection('chat').doc(route.params.chat_id).collection('msgs').onSnapshot(snap => {
             if (snap && !snap.empty) {
                 const data = snap.docs.map(doc => doc.data())
                 setMsgs(data);
@@ -83,7 +84,7 @@ const Aluguel = ({user, route}) => {
                         </View>
                     </TitleBox>
                 </HeaderTop>
-                {route.params.isOwner &&
+                {details.owner_id == user.userId && 
                     <View>
                         <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
                             onPress={async () => {
@@ -112,10 +113,7 @@ const Aluguel = ({user, route}) => {
                         title: 'Convidar'
                     }} children={ props => 
                     
-                        <Chat {...props} style={{
-                            paddingTop: 10,
-                            paddingBottom: 10
-                        }}>
+                        <Chat {...props}>
                             {!inviteList || inviteList.length == 0 && 
                                 <Text>Não existem usuários disponíveis para convidar.</Text>
                             }
@@ -263,10 +261,10 @@ const Aluguel = ({user, route}) => {
                 >
                     {msgs.length > 0 && msgs.map((m, i) => 
                         (
-                            <ChatMsg key={i} mine={m.userid == user.id}>
+                            <ChatMsg key={i} mine={m.userid == user.userId}>
                                 <View style={{marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                                     <Text style={{fontSize: 10, color: '#666'}}>
-                                        {m.userid == user.id ? 'eu' : m.usuario}
+                                        {m.userid == user.userId ? 'eu' : m.usuario}
                                     </Text>
                                     <Text style={{marginLeft: 8, fontSize: 8, color: '#666'}}>
                                         {format(m.created_at.toDate(), 'HH:mm')}
@@ -294,11 +292,11 @@ const Aluguel = ({user, route}) => {
         
                     <TouchableOpacity onPress={() => {
                         if (msg.length > 0) {
-                            Firestore().collection('chat').doc(route.params.chatId).collection('msgs').add({
+                            Firestore().collection('chat').doc(route.params.chat_id).collection('msgs').add({
                                 created_at: new Date(),
                                 msg: msg,
-                                userid: user.id,
-                                usuario: user.nome
+                                userid: user.userId,
+                                usuario: `${user.userName} ${user.userSurname}`
                             });
                             setMsg('');
                         }
@@ -313,10 +311,8 @@ const Aluguel = ({user, route}) => {
         );
     } else {
         return (
-            <View>
-                <Text>
-                    Loading...
-                </Text>
+            <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator color="#f4511e" size={80}></ActivityIndicator>
             </View>
         );
     }
