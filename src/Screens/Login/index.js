@@ -68,6 +68,7 @@ const Login = ({navigation}) => {
                         }}
                     >
                         <TextInput
+                            secureTextEntry={true}
                             style={{
                                 height: 50,
                             }}

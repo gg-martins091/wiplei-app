@@ -9,6 +9,7 @@ import Login from './src/Screens/Login';
 import Main from './src/Screens/Main';
 import Cadastro from './src/Screens/Cadastro';
 import Api from './src/Service';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 
 const Stack = createStackNavigator();
@@ -124,16 +125,16 @@ export default function App({ navigation }) {
             // We will also need to handle errors if sign up failed
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token  
-            
             try {
-                const data = await Api.post('users', {
+                const resp = await Api.post('users', {
                     email: data.email,
                     name: data.name,
                     surname: data.surname,
                     password: data.password
                 });
-                return data;
+                return resp;
             } catch (e) {
+                console.log(e);
                 throw(e);
             }
           },
@@ -142,6 +143,7 @@ export default function App({ navigation }) {
     );
 
     return (
+        <RootSiblingParent>
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
             <Stack.Navigator>
@@ -191,6 +193,7 @@ export default function App({ navigation }) {
             </Stack.Navigator>
             </NavigationContainer>
         </AuthContext.Provider>
+        </RootSiblingParent>
     );
 };
   
