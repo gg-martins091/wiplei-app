@@ -215,9 +215,7 @@ const EspacoDetalhe = ({navigation, route}) => {
                                     });
 
                                     if (data.data.id) {
-                                        navigation.dispatch(
-                                            StackActions.replace('Alugueis')
-                                        );
+                                        navigation.navigate('MainTabs', {screen: 'Alugueis'});
                                     }
                                 }
                             }}

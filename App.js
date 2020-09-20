@@ -189,6 +189,8 @@ export default function App({ navigation }) {
                      />}
                 </Stack.Screen>
 
+                
+
                 )}
             </Stack.Navigator>
             </NavigationContainer>
