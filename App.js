@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from './src/Contexts';
 import Login from './src/Screens/Login';
 import Main from './src/Screens/Main';
+import Cadastro from './src/Screens/Cadastro';
 import Api from './src/Service';
 
 
@@ -122,9 +123,24 @@ export default function App({ navigation }) {
             // In a production app, we need to send user data to server and get a token
             // We will also need to handle errors if sign up failed
             // After getting token, we need to persist the token using `AsyncStorage`
-            // In the example, we'll use a dummy token
-    
-            dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+            // In the example, we'll use a dummy token  
+            console.log({
+                email: data.email,
+                name: data.name,
+                surname: data.surname,
+                password: data.password,
+            });
+
+            Api.post('users', {
+                email: data.email,
+                name: data.name,
+                surname: data.surname,
+                password: data.password,
+            }).then(({data}) => {
+                console.log(data); 
+            }).catch(e => {
+                console.log(JSON.stringify(e));
+            });
           },
         }), 
         []
@@ -141,6 +157,7 @@ export default function App({ navigation }) {
                 }} name="Splash" component={SplashScreen} />
                 ) : state.userToken == null ? (
                 // No token found, user isn't signed in
+                <>
                 <Stack.Screen
                     name="Login"
                     component={Login}
@@ -149,6 +166,16 @@ export default function App({ navigation }) {
                         animationTypeForReplace: state.isSignout ? 'pop' : 'push',
                     }}
                 />
+                    <Stack.Screen
+                    name="Cadastro"
+                    component={Cadastro}
+                    options={{
+                        headerShown: false,
+                        animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                    }}
+                />
+
+                </>
                 ) : (
                 // User is signed in
                 <Stack.Screen 

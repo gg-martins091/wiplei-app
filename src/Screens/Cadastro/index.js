@@ -3,11 +3,12 @@ import { Image, View, KeyboardAvoidingView, ScrollView, TextInput, TouchableOpac
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../../Contexts';
 
-
-const Login = ({navigation}) => {
-    const [username, setUsername] = useState('');
+const Cadastro = () => {
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn } = useContext(AuthContext);
+    const { signUp } = useContext(AuthContext);
 
     
     return (
@@ -29,13 +30,14 @@ const Login = ({navigation}) => {
                 width: '100%'
             }}>
 
-                <Image style={{width: 250, height: 100, marginBottom: 45}} resizeMode="contain" source={require('../../../assets/logo.png')} />
+                <Image style={{width: 200, height: 50, marginBottom: 45}} resizeMode="contain" source={require('../../../assets/logo.png')} />
                 <View 
                     style={{
                         justifyContent: 'center',
                         width: '90%',
                         backgroundColor: '#fff',
-                        paddingLeft: 30
+                        paddingLeft: 30,
+                        marginTop: 25
                     }}
                 >
                     <TextInput
@@ -43,12 +45,12 @@ const Login = ({navigation}) => {
                             height: 50,
                         }}
                         backgroundColor= '#fff'
-                        placeholder="Usuário"
+                        placeholder="Email"
                         autoCompleteType="email"
                         keyboardType="email-address"
                         textContentType="emailAddress"
-                        value={username}
-                        onChangeText={setUsername}
+                        value={email}
+                        onChangeText={setEmail}
                     />
                     <Icon 
                     style={{
@@ -64,7 +66,59 @@ const Login = ({navigation}) => {
                         width: '90%',
                         backgroundColor: '#fff',
                         paddingLeft: 30,
-                        marginTop: 10
+                        marginTop: 25,
+                    }}
+                >
+                    <TextInput
+                        style={{
+                            height: 50,
+                        }}
+                        backgroundColor= '#fff'
+                        placeholder="Nome"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <Icon 
+                    style={{
+                        position: 'absolute',
+                        left: 5
+                    }} 
+                    name="account" size={20} />
+                </View>
+
+                <View 
+                    style={{
+                        justifyContent: 'center',
+                        width: '90%',
+                        backgroundColor: '#fff',
+                        paddingLeft: 30,
+                        marginTop: 25
+                    }}
+                >
+                    <TextInput
+                        style={{
+                            height: 50,
+                        }}
+                        backgroundColor= '#fff'
+                        placeholder="Sobrenome"
+                        value={surname}
+                        onChangeText={setSurname}
+                    />
+                    <Icon 
+                    style={{
+                        position: 'absolute',
+                        left: 5
+                    }} 
+                    name="account" size={20} />
+                </View>
+
+                <View 
+                    style={{
+                        justifyContent: 'center',
+                        width: '90%',
+                        backgroundColor: '#fff',
+                        paddingLeft: 30,
+                        marginTop: 25
                     }}
                 >
                     <TextInput
@@ -85,15 +139,15 @@ const Login = ({navigation}) => {
                 </View>
                 
                 <TouchableOpacity 
-                    disabled={username.length == 0 || password.length == 0}
+                    disabled={surname.length == 0 || name.length == 0 || email.length == 0 || password.length == 0}
                     onPress={() => {
-                        if (username.length > 0 && password.length > 0) {
-                            signIn({ username: username.toLowerCase(), password });
+                        if (name.length > 0 || surname.length > 0 || email.length > 0 && password.length > 0) {
+                            signUp({ surname: surname.toLowerCase(), email: email.toLowerCase(), name: name.toLowerCase(), password });
                         }
                     }} 
                     color="#fff"
                     style={{
-                        backgroundColor: (username.length == 0 || password.length == 0) ? "#ccc" : "#f4511e",
+                        backgroundColor: (surname.length == 0 || name.length == 0 || email.length == 0 || password.length == 0) ? "#ccc" : "#f4511e",
                         width: '80%',
                         borderRadius: 30,
                         padding: 15,
@@ -101,39 +155,12 @@ const Login = ({navigation}) => {
                         marginTop: 50
                     }}
                 >  
-                    <Text style={{fontSize: 16, color: "#fff"}}>Login</Text>
+                    <Text style={{fontSize: 16, color: "#fff"}}>Registre-se</Text>
                 </TouchableOpacity>
-                    
-                <TouchableOpacity style={{
-                    marginTop: 30
-                }}
-                onPress={() => navigation.push('Cadastro')}
-                >
-                    <Text style={{
-                        color: '#555'
-                    }}>Registre-se</Text>
-                </TouchableOpacity>
-
-                <View style={{
-                    display: 'flex',
-                    flex: 1,
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end'
-                }}>
-                    <Text style={{
-                        width: '90%',
-                        textAlign: 'center',
-                        color: "#aaa",
-                        
-                    }}>
-                        Ao prosseguir você concorda com os Termos de Serviços e Políticas de Privacidade.
-                    </Text>
-                </View>
                 </View>
         </KeyboardAvoidingView>
         </>
     );
 }
 
-export default Login;
+export default Cadastro;
