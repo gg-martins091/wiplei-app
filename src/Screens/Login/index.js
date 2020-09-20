@@ -22,7 +22,6 @@ const Login = ({navigation}) => {
                 paddingTop: 100
             }}
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{
                     flex: 1,
                     alignSelf: 'center',
@@ -132,7 +131,6 @@ const Login = ({navigation}) => {
                         </Text>
                     </View>
                     </View>
-                    </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         </>
     );
