@@ -124,23 +124,18 @@ export default function App({ navigation }) {
             // We will also need to handle errors if sign up failed
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token  
-            console.log({
-                email: data.email,
-                name: data.name,
-                surname: data.surname,
-                password: data.password,
-            });
-
-            Api.post('users', {
-                email: data.email,
-                name: data.name,
-                surname: data.surname,
-                password: data.password,
-            }).then(({data}) => {
-                console.log(data); 
-            }).catch(e => {
-                console.log(JSON.stringify(e));
-            });
+            
+            try {
+                const data = await Api.post('users', {
+                    email: data.email,
+                    name: data.name,
+                    surname: data.surname,
+                    password: data.password
+                });
+                return data;
+            } catch (e) {
+                throw(e);
+            }
           },
         }), 
         []
@@ -170,7 +165,7 @@ export default function App({ navigation }) {
                     name="Cadastro"
                     component={Cadastro}
                     options={{
-                        headerShown: false,
+                        title: 'Voltar para o login',
                         animationTypeForReplace: state.isSignout ? 'pop' : 'push',
                     }}
                 />
