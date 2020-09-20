@@ -126,12 +126,11 @@ const Login = ({navigation}) => {
                             width: '90%',
                             textAlign: 'center',
                             color: "#aaa",
-                            
                         }}>
                             Ao prosseguir você concorda com os Termos de Serviços e Políticas de Privacidade.
                         </Text>
                     </View>
-                    </View>
+                </View>
         </KeyboardAvoidingView>
         </>
     );

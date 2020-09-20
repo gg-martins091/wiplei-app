@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Descubra from '../Descubra';
 import Alugueis from '../Alugueis';
+import Perfil from '../Perfil';
 import Aluguel from '../AluguelDetalhe';
 import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
 import EspacoDetalhe from '../EspacoDetalhe';
@@ -20,7 +21,7 @@ function Main(props) {
       initialRouteName="Descubra"
       tabBarOptions={{
         activeTintColor: 'white',
-        inactiveTintColor: '#444',
+        inactiveTintColor: '#f4511e',
         activeBackgroundColor: '#f4511e',
       }}
     >
@@ -54,6 +55,22 @@ function Main(props) {
             }}
         >
             {props => <Alugueis {...props} user={propsState.user}/>}
+        </Tab.Screen>
+
+        <Tab.Screen 
+            {...props}
+            name="Perfil"
+            options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Icon name="account-box" size={22} color={color} />
+                ),
+                tabBarLabel: ({focused, color}) => (
+                    <><Text style={{color: color}}>Perfil</Text></>
+                )
+                //tabBarBadge: 3, 
+            }}
+        >
+            {props => <Perfil {...props} user={propsState.user}/>}
         </Tab.Screen>
       
     </Tab.Navigator>
