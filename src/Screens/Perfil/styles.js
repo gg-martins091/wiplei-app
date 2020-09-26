@@ -58,3 +58,10 @@ export const FilterFormInput = styled.TextInput`
     border: 1px solid black;
     flex: 1;
 `;
+
+export const AmigosContainer = styled.ScrollView`
+    padding: 0px 12px;
+    background-color: #f5f5f5;
+    padding-top: 10px;
+    padding-bottom: 10px;
+`

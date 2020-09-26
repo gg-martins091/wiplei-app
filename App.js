@@ -98,22 +98,23 @@ export default function App({ navigation }) {
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token
             
-            Api.post('login', {
-                email: data.username,
-                password: data.password,
-            }).then(({data}) => {
+            try {
+                const {data:dt} =  await Api.post('login', {
+                    email: data.username,
+                    password: data.password
+                });
                 const d = {
-                    id: data.user.id,
-                    token: data.token,
-                    name: data.user.name,
-                    surname: data.user.surname
+                    id: dt.user.id,
+                    token: dt.token,
+                    name: dt.user.name,
+                    surname: dt.user.surname
                 };
                 AsyncStorage.setItem('userInfo', JSON.stringify(d)).then(x => {
-                    dispatch({ type: 'SIGN_IN', token: data.token, id: data.user.id, name: data.user.name, surname: data.user.surname });
+                    dispatch({ type: 'SIGN_IN', token: dt.token, id: dt.user.id, name: dt.user.name, surname: dt.user.surname });
                 });
-            }).catch(e => {
-                console.log(JSON.stringify(e));
-            });
+            } catch(e) {
+                throw e.response.data.error;
+            }
             
           },
           signOut: () => {
@@ -188,9 +189,6 @@ export default function App({ navigation }) {
                         userSurname: state.surname}}
                      />}
                 </Stack.Screen>
-
-                
-
                 )}
             </Stack.Navigator>
             </NavigationContainer>
