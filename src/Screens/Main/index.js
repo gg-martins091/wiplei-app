@@ -3,11 +3,12 @@ import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Descubra from '../Descubra';
 import Alugueis from '../Alugueis';
 import Perfil from '../Perfil';
 import Aluguel from '../AluguelDetalhe';
 import EstabelecimentoDetalhe from '../EstabelecimentoDetalhe';
+import Estabelecimentos from '../Estabelecimentos';
+import CampeonatoDetalhe from '../CampeonatoDetalhe';
 import EspacoDetalhe from '../EspacoDetalhe';
 import LogoutHeader from '../../Components/LogoutHeader';
 
@@ -38,7 +39,7 @@ function Main(props) {
             }}
         
         >
-            {props => <Descubra {...props} user={propsState.user}/>}
+            {props => <Estabelecimentos {...props} user={propsState.user}/>}
         </Tab.Screen>
 
         <Tab.Screen 
@@ -126,6 +127,18 @@ function MainStackComponent(props) {
                 }}
             >
                 {props => <EstabelecimentoDetalhe {...props} user={propsState.user}/>}
+            </MainStack.Screen>
+
+            <MainStack.Screen 
+                name="CampeonatoDetalhe"
+                options={{
+                    title: 'Wiplei',
+                    headerRight: () => (
+                        <LogoutHeader />
+                    )
+                }}
+            >
+                {props => <CampeonatoDetalhe {...props} user={propsState.user}/>}
             </MainStack.Screen>
 
             <MainStack.Screen 

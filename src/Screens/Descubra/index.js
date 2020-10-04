@@ -14,7 +14,7 @@ const TabNavigator = (props) => {
     return (
         <Tab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
             <Tab.Screen name="Estabelecimentos" children={ props => <Estabelecimentos {...props} user={propsState.user} />} />
-            <Tab.Screen name="Campeonatos" children={ props => <CampeonatosScreen {...props} user={propsState.user} />} />
+            {/* <Tab.Screen name="Campeonatos" children={ props => <CampeonatosScreen {...props} user={propsState.user} />} /> */}
         </Tab.Navigator>
     )
 }
@@ -42,7 +42,7 @@ const Descubra = (props) => {
                     )
                 }}
             >
-                {props => <TabNavigator {...props} user={propsState.user}/>}
+                {props => <Estabelecimentos {...props} user={propsState.user} /> }
             </HomeStack.Screen>
            
         </HomeStack.Navigator>

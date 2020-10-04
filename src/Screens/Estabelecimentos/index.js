@@ -105,8 +105,28 @@ const Estabelecimentos = ({navigation}) => {
         setTimeFilters();
 
         async function getEstablishments() {
-            const d = await Api.get('establishments');
-            setItems(d.data);
+            try {
+
+                const d = await Api.get('establishments');
+                const newData = [];
+                if (d.data && d.data.length > 0) {
+                    d.data.forEach(x => {
+                        const dSports = [];
+                        if (x.spaces && x.spaces.length > 0) {
+                            x.spaces.forEach(xs => {
+                                if (!dSports.includes(xs.sport.name)) {
+                                    dSports.push(xs.sport.name);
+                                }
+                            })
+                        }
+                        newData.push({...x, sports: dSports});
+                    });
+                }
+                setItems(newData);
+            } catch (e) {
+                console.log(e);
+            }
+            
         }
         getEstablishments();
 
@@ -149,7 +169,8 @@ const Estabelecimentos = ({navigation}) => {
         {filterOpen && 
         <FilterFormContainer>
             <Text style={{color: '#f4511e', textAlign: 'center', fontSize: 24, marginBottom: 15}}>Filtros</Text>
-            <FilterInputView>
+            {
+            /*<FilterInputView>
                 <View style={{width: 110}}>
                     <Text style={{marginRight: 10, textAlign: 'center'}}>Proximidade</Text>
                     <Text style={{color: '#666', textAlign: 'center'}}>{filterDistance >= 15 ? ('15km ou mais') : ('até ' + filterDistance + ' km')}</Text>
@@ -171,7 +192,8 @@ const Estabelecimentos = ({navigation}) => {
                         maximumTrackTintColor="#000000"
                     />
                 </View>
-            </FilterInputView>
+            </FilterInputView> */
+            }
 
             <FilterInputView>
                 <View style={{width: 110}}>
@@ -182,7 +204,7 @@ const Estabelecimentos = ({navigation}) => {
                     <Text style={{color: '#aaa'}}>De</Text>
                         <Picker
                             selectedValue={filterOpenTime}
-                            style={{height: 50, width: 100, color: '#666'}}
+                            style={{height: 50, width: 120, color: '#666'}}
                             mode='dropdown'
                             onValueChange={(v) => {
                                 if (v < filterCloseTime && v != filterOpenTime) {
@@ -199,7 +221,7 @@ const Estabelecimentos = ({navigation}) => {
                         <Text style={{color: '#aaa'}}>Até</Text>
                         <Picker
                             selectedValue={filterCloseTime}
-                            style={{height: 50, width: 100, color: '#666'}}
+                            style={{height: 50, width: 120, color: '#666'}}
                             mode='dropdown'
                             onValueChange={(v) => {
                                 if (v > filterOpenTime && v != filterCloseTime) {
@@ -218,7 +240,7 @@ const Estabelecimentos = ({navigation}) => {
 
             <FilterInputView>
                 <View style={{width: 110}}>
-                    <Text style={{marginRight: 10, textAlign: 'center'}}>Esportes</Text>
+                    <Text style={{marginRight: 10, textAlign: 'center'}}>Esporte</Text>
                 </View>
                 <View style={{flex: 1}}>
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -278,6 +300,7 @@ const Estabelecimentos = ({navigation}) => {
                 let closeTime = new Date();
                 closeTime.setHours(i.close_hours.substring(0,2) -3, i.close_hours.substring(3,5), "00", "00");
 
+                let eSports = i.sports.join(', ');
                 if (i.name.toLowerCase().includes(filter.toLowerCase())
                     && openTime <= filterOpen 
                     && closeTime >= filterClose
@@ -286,14 +309,15 @@ const Estabelecimentos = ({navigation}) => {
                     ) {
                     return (
                     <Estabelecimento key={k} onPress={() => navigation.push('EstabelecimentoDetalhe', { id: i.id })}>
-                        <View>
-                            <Word fsize="20px">{i.name}</Word>
+                        <View style={{marginBottom: 5}}>
+                            <Word fsize="20px" fcolor="#f4511e">{i.name}</Word>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
                                 <View style={{display: 'flex', flexDirection: 'row'}}>
                                     <Icon name="star" size={20} color="#f4511e" />
                                     <Word fsize="14px" fcolor="#888">{i.stars}</Word>
+                                    <Word style={{marginLeft: 10}} fsize="14px" fcolor="#888">Esportes: {eSports}</Word>
                                     {//<Word style={{marginLeft: 20}} fsize="14px" fcolor="#888">{i.distance}km</Word>
                                     }
                                 </View>
