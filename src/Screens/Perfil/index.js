@@ -288,6 +288,33 @@ function Amigos(props) {
                                     }}
                                     onPress={() => {
                                         setLoadingIndexes([...loadingIndexes, i]);
+                                        Api.post('/user-friend/removeFriend', {
+                                            friend_id: v.id
+                                        }).then(res => {
+                                            if (res.data) {
+                                                Toast.show('Convite aceitado com sucesso.', {
+                                                    duration: Toast.durations.SHORT,
+                                                    position: Toast.positions.BOTTOM,
+                                                    shadow: true,
+                                                    animation: true,
+                                                    hideOnPress: true,
+                                                });
+                                                let newList = amigos.filter((value, index) => index != i);
+                                                setAmigos(newList);
+                                            }
+                                            const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                            setLoadingIndexes(newLoadingIndexes);
+                                        }).catch(e => {
+                                            Toast.show('Ocorreu um erro, tente novamente.', {
+                                                duration: Toast.durations.SHORT,
+                                                position: Toast.positions.BOTTOM,
+                                                shadow: true,
+                                                animation: true,
+                                                hideOnPress: true,
+                                            });
+                                            const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                            setLoadingIndexes(newLoadingIndexes);
+                                        })
                                     }}
                                 >
                                     <Text style={{ color: 'white' }}>Desfazer</Text>
@@ -572,41 +599,6 @@ function Encontre(props) {
     );
 }
 
-function AmigoItem(props) {
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: 'white',
-            padding: 10,
-            marginBottom: 10 
-        }}>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center'
-            }}>
-                <Image style={{
-                    width: 50,
-                    height: 50,
-                    marginRight: 10
-                }} source={require('../../../assets/profile.png')} />
-                <Text>{props.name} {props.surname}</Text>
-            </View>
-            <TouchableOpacity
-                style={{
-                    borderRadius: 5,
-                    backgroundColor: '#f4511e',
-                    padding: 5
-                }}
-            >
-                <Text style={{ color: 'white' }}>{props.tipo == 2 ? 'Desfazer' : 'Adicionar'}</Text>
-            </TouchableOpacity>
-        </View>
-    );
-}
 
 function TabsComponent(props) {
     const [propsState, setPropsState] = useState(props);
