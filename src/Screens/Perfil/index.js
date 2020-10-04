@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Dimensions, TextInput } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Dimensions, TextInput, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     AmigosContainer,
@@ -198,13 +198,25 @@ const Perfil = (props) => {
 
 function Amigos(props) {
     const [amigos, setAmigos] = useState();
+    const [loadingIndexes, setLoadingIndexes] = useState([]);
+    const [doneIndexes, setDoneIndexes] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    async function getAmigos() {
+        const data = await Api.get('/user-friend/listFriendsAndInvites');
+        setAmigos(data.data || []);
+        setLoadingIndexes([]);
+        setDoneIndexes([]);
+        return true;
+    }
 
     useEffect(() => {
-        async function getAmigos() {
-            const data = await Api.get('/user-friend/friends');
-            setAmigos(data.data || []);
-        }
         getAmigos();
+    }, []);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getAmigos().then(() => setRefreshing(false));
     }, []);
 
     return (
@@ -226,9 +238,13 @@ function Amigos(props) {
             }
 
             {amigos && amigos.length > 0 &&
-                <AmigosContainer {...props}>
+                <AmigosContainer {...props} 
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
                     {amigos.map((v,i) => (
-                        <View key ={i} style={{
+                        <View key={i} style={{
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
@@ -237,7 +253,178 @@ function Amigos(props) {
                             padding: 10,
                             marginBottom: 10 
                         }}>
-                            <Text>{v.name} {v.surname}</Text>
+                            <View style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <Image style={{
+                                    width: 50,
+                                    height: 50,
+                                    marginRight: 10
+                                }} source={require('../../../assets/profile.png')} />
+                                <Text>{v.name} {v.surname} </Text>
+                            </View>
+                            
+                            {loadingIndexes.includes(i) && 
+                                <View
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                >
+                                    <ActivityIndicator color="white"></ActivityIndicator>
+                                </View>
+                            }
+
+                            {v.tipo == 'Amigo' &&
+                                !loadingIndexes.includes(i) && 
+                                <TouchableOpacity
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                    onPress={() => {
+                                        setLoadingIndexes([...loadingIndexes, i]);
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}>Desfazer</Text>
+                                </TouchableOpacity>
+                            }
+
+                            {v.tipo == 'ConviteRecebido' &&
+                                !loadingIndexes.includes(i) && 
+                                <View style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center'
+                                }}>
+                                    <TouchableOpacity
+                                        style={{
+                                            borderRadius: 5,
+                                            backgroundColor: '#37ad55',
+                                            padding: 5,
+                                            paddingHorizontal: 8,
+                                            marginRight: 5
+                                        }}
+                                        onPress={() => {
+                                            Api.post('/user-friend/accepted', {
+                                                requestor_id: v.id,
+                                                accepted: true
+                                            }).then(res => {
+                                                if (res.data) {
+                                                    Toast.show('Convite aceitado com sucesso.', {
+                                                        duration: Toast.durations.SHORT,
+                                                        position: Toast.positions.BOTTOM,
+                                                        shadow: true,
+                                                        animation: true,
+                                                        hideOnPress: true,
+                                                    });
+                                                    let tmp = amigos[i];
+                                                    let newList = amigos.filter((value, index) => index != i);
+                                                    tmp['tipo'] = 'Amigo';
+                                                    newList.push(tmp);
+                                                    setAmigos(newList);
+                                                }
+                                                const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                                setLoadingIndexes(newLoadingIndexes);
+                                            }).catch(e => {
+                                                Toast.show('Ocorreu um erro, tente novamente.', {
+                                                    duration: Toast.durations.SHORT,
+                                                    position: Toast.positions.BOTTOM,
+                                                    shadow: true,
+                                                    animation: true,
+                                                    hideOnPress: true,
+                                                });
+                                                const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                                setLoadingIndexes(newLoadingIndexes);
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ color: 'white' }}>Aceitar</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={{
+                                            padding: 5
+                                        }}
+                                        onPress={() => {
+                                            Api.post('/user-friend/accepted', {
+                                                requestor_id: v.id,
+                                                accepted: false
+                                            }).then(res => {
+                                                if (res.data) {
+                                                    Toast.show('Convite recusado com sucesso.', {
+                                                        duration: Toast.durations.SHORT,
+                                                        position: Toast.positions.BOTTOM,
+                                                        shadow: true,
+                                                        animation: true,
+                                                        hideOnPress: true,
+                                                    });
+                                                }
+                                                const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                                setLoadingIndexes(newLoadingIndexes);
+                                                const newList = amigos.filter((value, index) => index != i);
+                                                setAmigos(newList);
+                                            }).catch(e => {
+                                                Toast.show('Ocorreu um erro, tente novamente.', {
+                                                    duration: Toast.durations.SHORT,
+                                                    position: Toast.positions.BOTTOM,
+                                                    shadow: true,
+                                                    animation: true,
+                                                    hideOnPress: true,
+                                                });
+                                                const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                                setLoadingIndexes(newLoadingIndexes);
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ color: '#f4511e' }}>Recusar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+
+                            {v.tipo == 'ConviteEnviado' &&
+                                !loadingIndexes.includes(i) && 
+                                <TouchableOpacity
+                                    style={{
+                                        padding: 5
+                                    }}
+                                    onPress={() => {
+                                        Api.post('/user-friend/cancelInvite', {
+                                            requested_id: v.id
+                                        }).then(res => {
+                                            if (res.data) {
+                                                Toast.show('Convite cancelado.', {
+                                                    duration: Toast.durations.SHORT,
+                                                    position: Toast.positions.BOTTOM,
+                                                    shadow: true,
+                                                    animation: true,
+                                                    hideOnPress: true,
+                                                });
+                                            }
+                                            const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                            setLoadingIndexes(newLoadingIndexes);
+                                            const newList = amigos.filter((value, index) => index != i);
+                                            setAmigos(newList);
+                                        }).catch(e => {
+                                            Toast.show('Ocorreu um erro, tente novamente.', {
+                                                duration: Toast.durations.SHORT,
+                                                position: Toast.positions.BOTTOM,
+                                                shadow: true,
+                                                animation: true,
+                                                hideOnPress: true,
+                                            });
+                                            const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                            setLoadingIndexes(newLoadingIndexes);
+                                        });
+                                    }}
+                                >
+                                    <Text style={{ color: '#f4511e' }}>Cancelar Convite</Text>
+                                </TouchableOpacity>
+                            }
                         </View>
                     ))
                     }
@@ -249,21 +436,174 @@ function Amigos(props) {
 
 function Encontre(props) {
     const [input, setInput] = useState('');
-    const [usuarios, setUsuarios] = useState([]);
+    const [usuarios, setUsuarios] = useState();
+    const [loadingIndexes, setLoadingIndexes] = useState([]);
+    const [doneIndexes, setDoneIndexes] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+    async function getUsuarios() {
+        const d = await Api.get('/user-friend/users');
+        setUsuarios(d.data);
+        setLoadingIndexes([]);
+        setDoneIndexes([]);
+        return true;
+    }
 
-    useEffect(() => {
-        async function getUsuarios() {
-            const d = Api.get('/user-friend/users');
-            setUsuarios(d.data);
-        }
+    useEffect(() => {   
         getUsuarios();
     }, []);
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getUsuarios().then(() => setRefreshing(false));
+    }, []);
+
     return (
-        <View>
-            <Text>
-                Teste
-            </Text>
+        <>
+            {!usuarios &&
+                <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <ActivityIndicator color="#f4511e" size={30}></ActivityIndicator>
+                    <Text>Resgatando sua lista de amigos...</Text>
+                </View>
+            }
+
+            {usuarios && usuarios.length == 0 &&
+                <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{
+                        textAlign: 'center',
+                        marginTop: 30
+                    }}>Ninguém encontrado para adicionar.</Text>
+                </View>
+            }
+
+            {usuarios && usuarios.length > 0 &&
+                <AmigosContainer {...props}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
+                    {usuarios.map((v,i) => (
+                        <View key={i} style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            padding: 10,
+                            marginBottom: 10 
+                        }}>
+                            <View style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <Image style={{
+                                    width: 50,
+                                    height: 50,
+                                    marginRight: 10
+                                }} source={require('../../../assets/profile.png')} />
+                                <Text>{v.name} {v.surname}</Text>
+                            </View>
+                            {loadingIndexes.includes(i) && 
+                                <View
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                >
+                                    <ActivityIndicator color="white"></ActivityIndicator>
+                                </View>
+                            }
+                            
+                            {doneIndexes.includes(i) &&
+                                <View  style={{
+                                    borderRadius: 5,
+                                    backgroundColor: '#f4511e',
+                                    padding: 5,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center'
+                                }}>
+                                    <Icon 
+                                        style={{
+                                            marginRight: 5
+                                        }} 
+                                        name="check" color="white" size={22} />
+                                    <Text style={{ color: 'white' }}>Enviado</Text>
+                                </View>
+                            }
+                            
+                            {!loadingIndexes.includes(i) && !doneIndexes.includes(i) && 
+                                <TouchableOpacity
+                                    style={{
+                                        borderRadius: 5,
+                                        backgroundColor: '#f4511e',
+                                        padding: 5
+                                    }}
+                                    onPress={() => {
+                                        setLoadingIndexes([...loadingIndexes, i]);
+                                        Api.post('/user-friend', {
+                                            requested_id: v.id
+                                        }).then(res => {
+                                            Toast.show(res.data.success == false ? res.data.message : 'Convite enviado com sucesso.', {
+                                                duration: Toast.durations.SHORT,
+                                                position: Toast.positions.BOTTOM,
+                                                shadow: true,
+                                                animation: true,
+                                                hideOnPress: true,
+                                            });
+                                            
+                                            const newLoadingIndexes = loadingIndexes.filter(x => x != i);
+                                            setLoadingIndexes(newLoadingIndexes);
+                                            setDoneIndexes([...doneIndexes, i]);
+                                        }).catch(e => console.log(e))
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}>Enviar convite</Text>
+                                </TouchableOpacity>
+                            }
+
+                        </View>
+                    ))
+                }
+                </AmigosContainer>    
+            }
+        </>
+    );
+}
+
+function AmigoItem(props) {
+    return (
+        <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            padding: 10,
+            marginBottom: 10 
+        }}>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center'
+            }}>
+                <Image style={{
+                    width: 50,
+                    height: 50,
+                    marginRight: 10
+                }} source={require('../../../assets/profile.png')} />
+                <Text>{props.name} {props.surname}</Text>
+            </View>
+            <TouchableOpacity
+                style={{
+                    borderRadius: 5,
+                    backgroundColor: '#f4511e',
+                    padding: 5
+                }}
+            >
+                <Text style={{ color: 'white' }}>{props.tipo == 2 ? 'Desfazer' : 'Adicionar'}</Text>
+            </TouchableOpacity>
         </View>
     );
 }

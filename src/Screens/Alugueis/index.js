@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Text, ActivityIndicator, Dimensions } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Image, Text, ActivityIndicator, Dimensions, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
     ScrollContainer,
@@ -14,21 +14,31 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const Tabs = createMaterialTopTabNavigator();
 
 const Alugueis = (props) => {
-    let [items, setItems] = useState();
+    const [items, setItems] = useState();
+    const [refreshing, setRefreshing] = useState(false);
 
     async function getAlugueis() {
         const data = await Api.get(props.isInvite ? 'rent-invite' :'rents');
         setItems(data.data || []);
+        return true;
     }
 
     useEffect(() => {
         getAlugueis();
     }, []);
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getAlugueis().then(() => setRefreshing(false));
+    }, []);
+
     const w = (Dimensions.get('window').width / 2) - 20;
 
     return (
-        <ScrollContainer>
+        <ScrollContainer
+        refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {!items && 
             <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <ActivityIndicator color="#f4511e" size={80}></ActivityIndicator>
@@ -44,10 +54,7 @@ const Alugueis = (props) => {
                 marginTop: 10,
                 marginBottom: 20
             }}>
-            <Text 
-                onPress={() => getAlugueis()}
-                style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você não tem nenhum {props.isInvite ? 'convite' : 'aluguél'}.</Text>
-                <Icon name="refresh" color="#f4511e" size={20} />
+            <Text style={{textAlign: 'center', marginTop: 10, marginBottom: 20, color: '#f4511e'}}>Você não tem nenhum {props.isInvite ? 'convite' : 'aluguél'}.</Text>
             </View>
         }
         
@@ -60,11 +67,8 @@ const Alugueis = (props) => {
                 marginTop: 10,
                 marginBottom: 20
             }}>
-                <Text 
-                onPress={() => getAlugueis()}
-                style={{textAlign: 'center', color: '#f4511e', marginRight: 10}}>Você tem {items.length} {props.isInvite ? items.length == 1 ? 'convite' : 'convites' : items.length == 1 ? 'aluguél' : 'aluguéis'}.
+                <Text style={{textAlign: 'center', color: '#f4511e', marginRight: 10}}>Você tem {items.length} {props.isInvite ? items.length == 1 ? 'convite' : 'convites' : items.length == 1 ? 'aluguél' : 'aluguéis'}.
                 </Text>
-                <Icon name="refresh" color="#f4511e" size={20} />
             </View>
         }
         
