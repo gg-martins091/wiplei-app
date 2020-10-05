@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { 
     Header,
@@ -29,15 +29,21 @@ const Aluguel = ({user, route}) => {
     const [invitesLoading, setInvitesLoading] = useState([]);
     const [invitesDone, setInvitesDone] = useState([]);
     const [invitesSent, setInvitesSent] = useState([]);
+    const [refreshing1, setRefreshing1] = useState(false);
+    const [refreshing2, setRefreshing2] = useState(false);
 
     async function getInviteList() {
         const data = await Api.get(`/rents/users/not/${route.params.id}`);
         setInviteList(data.data || []);
+        setInvitesDone([]);
+        setInvitesLoading([]);
+        return true;
     }
 
     async function getInvitesSent() {
         const data = await Api.get(`/rent-invite/${route.params.id}`);
         setInvitesSent(data.data);
+        return true;
     }
     
     useEffect(() => {
@@ -63,7 +69,16 @@ const Aluguel = ({user, route}) => {
         return () => unsubscribe();
     }, [])
 
+    const onRefresh1 = useCallback(() => {
+        setRefreshing1(true);
+        getInviteList().then(() => setRefreshing1(false));
+    }, []);
 
+
+    const onRefresh2 = useCallback(() => {
+        setRefreshing2(true);
+        getInvitesSent().then(() => setRefreshing2(false));
+    }, []);
     const scrollViewRef = useRef();
     if (details) {
         return (
@@ -113,7 +128,11 @@ const Aluguel = ({user, route}) => {
                         title: 'Convidar'
                     }} children={ props => 
                     
-                        <Chat {...props}>
+                        <Chat 
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing1} onRefresh={onRefresh1} />
+                            }
+                            {...props}>
                             {!inviteList || inviteList.length == 0 && 
                                 <Text>Não existem usuários disponíveis para convidar.</Text>
                             }
@@ -198,7 +217,11 @@ const Aluguel = ({user, route}) => {
                         title: 'Convites Enviados'
                     }} children={ props => 
                     
-                        <Chat {...props} style={{
+                        <Chat 
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing2} onRefresh={onRefresh2} />
+                        }
+                        {...props} style={{
                             paddingTop: 10,
                             paddingBottom: 10
                         }}>
@@ -230,7 +253,7 @@ const Aluguel = ({user, route}) => {
                                                 });
 
                                                 if (d.data.success) {
-                                                    getInviteList();
+                                                  //  getInviteList();
                                                     getInvitesSent();
                                                 }
                                             } catch (er) {
