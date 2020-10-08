@@ -127,12 +127,7 @@ export default function App({ navigation }) {
             // After getting token, we need to persist the token using `AsyncStorage`
             // In the example, we'll use a dummy token  
             try {
-                const resp = await Api.post('users', {
-                    email: data.email,
-                    name: data.name,
-                    surname: data.surname,
-                    password: data.password
-                });
+                const resp = await Api.post('users', data);
                 return resp;
             } catch (e) {
                 console.log(e);

@@ -29,6 +29,7 @@ const Aluguel = ({user, route}) => {
     const [invitesLoading, setInvitesLoading] = useState([]);
     const [invitesDone, setInvitesDone] = useState([]);
     const [invitesSent, setInvitesSent] = useState([]);
+    const [acceptedInvites, setAcceptedInvites] = useState([]);
     const [refreshing1, setRefreshing1] = useState(false);
     const [refreshing2, setRefreshing2] = useState(false);
 
@@ -45,6 +46,12 @@ const Aluguel = ({user, route}) => {
         setInvitesSent(data.data);
         return true;
     }
+
+    async function getAcceptedInvitesSent() {
+        const data = await Api.get(`/rent-invite/accepted/${route.params.id}`);
+        setAcceptedInvites(data.data);
+        return true;
+    }
     
     useEffect(() => {
         async function getDetails() {
@@ -58,6 +65,7 @@ const Aluguel = ({user, route}) => {
         getDetails();
         getInviteList();
         getInvitesSent();
+        getAcceptedInvitesSent();
         
 
         const unsubscribe = Firestore().collection('chat').doc(route.params.chat_id).collection('msgs').onSnapshot(snap => {
@@ -77,7 +85,10 @@ const Aluguel = ({user, route}) => {
 
     const onRefresh2 = useCallback(() => {
         setRefreshing2(true);
-        getInvitesSent().then(() => setRefreshing2(false));
+        Promise.all([
+            getAcceptedInvitesSent(),
+            getInvitesSent(),
+        ]).then(() => setRefreshing2(false));
     }, []);
     const scrollViewRef = useRef();
     if (details) {
@@ -225,11 +236,17 @@ const Aluguel = ({user, route}) => {
                             paddingTop: 10,
                             paddingBottom: 10
                         }}>
-                            {!invitesSent || invitesSent.length == 0 && 
+                            {(!invitesSent && !acceptedInvites) || (invitesSent.length == 0 && acceptedInvites.length == 0) && 
                                 <Text>Não existem usuários convidados.</Text>
                             }
 
+                            {invitesSent.length > 0 &&
+                                <View style={{padding: 15}}>
+                                    <Text style={{textAlign: 'center', color: '#f4511e'}}>Convites enviados</Text>
+                                </View>
+                            }
                             {invitesSent.length > 0 && invitesSent.map((v,i) => (
+                                
                                 <View key={i} style={{
                                     display: 'flex',
                                     flexDirection: 'row',
@@ -266,6 +283,53 @@ const Aluguel = ({user, route}) => {
                                 </View>
                             ))
                             }
+
+                            {acceptedInvites.length > 0 &&
+                                <View style={{padding: 15}}>
+                                    <Text style={{textAlign: 'center', color: '#f4511e'}}>Convites aceitos</Text>
+                                </View>
+                            }
+                            
+                            {acceptedInvites.length > 0 && acceptedInvites.map((v,i) => (
+                                
+                                <View key={i} style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    padding: 10,
+                                    marginBottom: 10 
+                                }}>
+                                    <Text>{v.name} {v.surname}</Text>
+                                    <TouchableOpacity
+                                        style={{
+                                            borderRadius: 5,
+                                            backgroundColor: '#f4511e',
+                                            paddingVertical: 5,
+                                            paddingHorizontal: 10
+                                        }}
+                                        onPress={async () => {
+                                            try {
+                                                const d = await Api.post(`/rent-invite/accepted/remove`, {
+                                                    rent_id: v.rent_id,
+                                                    user_id: v.id
+                                                });
+
+                                                if (d.data.success) {
+                                                    getAcceptedInvitesSent();
+                                                }
+                                            } catch (er) {
+                                            }
+                                        }}
+                                    >
+                                        <Text style={{color: 'white'}}>Remover</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ))
+                            }
+
+
                         </Chat>              
                     } />
 

@@ -9,12 +9,13 @@ const Cadastro = ({navigation}) => {
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
     const { signUp } = useContext(AuthContext);
 
     
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior='height'
             style={styles.container}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -99,6 +100,31 @@ const Cadastro = ({navigation}) => {
                         name="account" size={20} />
                     </View>
 
+                    <View 
+                        style={{
+                            justifyContent: 'center',
+                            backgroundColor: '#fff',
+                            paddingLeft: 30,
+                            marginTop: 15
+                        }}
+                    >
+                        <TextInput
+                            style={{
+                                height: 50,
+                            }}
+                            backgroundColor= '#fff'
+                            placeholder="Telefone"
+                            value={phone}
+                            onChangeText={setPhone}
+                        />
+                        <Icon 
+                        style={{
+                            position: 'absolute',
+                            left: 5
+                        }} 
+                        name="account" size={20} />
+                    </View>
+
                     <View >
                         <View 
                             style={{
@@ -136,8 +162,8 @@ const Cadastro = ({navigation}) => {
                     <TouchableOpacity 
                         disabled={surname.length == 0 || name.length == 0 || email.length == 0 || password.length == 0}
                         onPress={() => {
-                            if (name.length > 0 || surname.length > 0 || email.length > 0 && password.length > 0) {
-                                signUp({ surname: surname.toLowerCase(), email: email.toLowerCase(), name: name.toLowerCase(), password }).then(d => {
+                            if (phone.length < 6 || name.length > 0 || surname.length > 0 || email.length > 0 && password.length > 0) {
+                                signUp({ phone: phone, surname: surname.toLowerCase(), email: email.toLowerCase(), name: name.toLowerCase(), password }).then(d => {
                                     Toast.show('Cadastro realizado com sucesso.', {
                                         duration: Toast.durations.SHORT,
                                         position: Toast.positions.BOTTOM,
