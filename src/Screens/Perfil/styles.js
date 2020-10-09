@@ -65,3 +65,65 @@ export const AmigosContainer = styled.ScrollView`
     padding-top: 10px;
     padding-bottom: 30px;
 `
+
+
+export const ModalContainer = styled.View`
+  flex: 1;
+  backgroundColor: #FFF;
+`;
+
+export const ModalImagesListContainer = styled.View``;
+
+export const ModalImagesList = styled.ScrollView`
+  paddingHorizontal: 20px;
+  paddingTop: 20px;
+`;
+
+export const ModalImageItem = styled.Image`
+  height: 100px;
+  width: 100px;
+  marginRight: 10px;
+`;
+
+export const ModalButtons = styled.View`
+  paddingHorizontal: 10px;
+  paddingVertical: 5px;
+  flexDirection: row;
+  justifyContent: space-between;
+`;
+
+export const CameraButtonContainer = styled.TouchableHighlight`
+  paddingVertical: 20px;
+  paddingHorizontal: 40px;
+`;
+
+export const CancelButtonText = styled.Text`
+  color: #333;
+  fontSize: 18px;
+  fontWeight: bold;
+`;
+
+export const ContinueButtonText = styled.Text`
+  color: #fc6663;
+  fontSize: 18px;
+  fontWeight: bold;
+`;
+
+export const TakePictureButtonContainer = styled.TouchableHighlight`
+  position: absolute;
+  alignSelf: center;
+  bottom: 20;
+  width: 60px;
+  height: 60px;
+  backgroundColor: #FFF;
+  borderRadius: 30px;
+  alignItems: center;
+  justifyContent: center;
+`;
+
+export const TakePictureButtonLabel = styled.View`
+  width: 52px;
+  height: 52px;
+  borderRadius: 26px;
+  backgroundColor: #fc6663;
+`;

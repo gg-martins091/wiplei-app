@@ -1,14 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Dimensions, TextInput, RefreshControl } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef} from 'react';
+import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Modal, StatusBar, Dimensions, TextInput, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     AmigosContainer,
+    ModalContainer,
+    ModalImagesListContainer,
+    ModalImagesList,
+    ModalImageItem,
+    ModalButtons,
+    CameraButtonContainer,
+    CancelButtonText,
+    ContinueButtonText,
+    TakePictureButtonContainer,
+    TakePictureButtonLabel
 } from './styles';
 import Api from '../../Service';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-root-toast';
-
+import { RNCamera } from 'react-native-camera';
 const Tabs = createMaterialTopTabNavigator();
 
 const Perfil = (props) => {
@@ -17,6 +27,9 @@ const Perfil = (props) => {
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
     const [loading, setLoading] = useState(false);
+    const [cameraModalOpened, setCameraModalOpened] = useState(false);
+    const [images, setImages] = useState([]);
+    const camera = useRef(null);
 
     async function getInfo() {
         const data = await Api.get('/users');
@@ -52,10 +65,15 @@ const Perfil = (props) => {
                     alignItems: 'center',
                     marginBottom: 10,
                 }}>
-                    <Image style={{
+                    <TouchableOpacity onPress={() => {
+                        setCameraModalOpened(!cameraModalOpened);
+                    }}>
+                        <Image style={{
                         width: 150,
                         height: 150
                     }} source={require('../../../assets/profile.png')} />
+                    </TouchableOpacity>
+                    
                     <Text>{info.name} {info.surname}</Text>
                     <Text style={{
                         color: '#999',
@@ -189,6 +207,79 @@ const Perfil = (props) => {
                         <ActivityIndicator color="#fff" size={30}></ActivityIndicator>
                     }
                 </TouchableOpacity>
+                <Modal
+                    visible={cameraModalOpened}
+                    transparent={false}
+                    animationType="slide"
+                    onRequestClose={() => setCameraModalOpened(!cameraModalOpened)}
+                    >
+                    <ModalContainer>
+                        <ModalContainer>
+                        <RNCamera
+                            ref={camera}
+                            style={{ flex: 1 }}
+                            type={RNCamera.Constants.Type.back}
+                            autoFocus={RNCamera.Constants.AutoFocus.on}
+                            flashMode={RNCamera.Constants.FlashMode.off}
+                            androidCameraPermissionOptions={{
+                                title: "Permissão para usar camêra",
+                                message: "Precisamos da sua permissão para acessar a camêra do seu celular."
+                            }}
+                        />
+                        <TakePictureButtonContainer onPress={async () => {
+                            if (camera) {
+                                const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
+                                const data = await camera.current.takePictureAsync(options)
+                                setImages([...images, data]);
+                            }
+                        }}>
+                            <TakePictureButtonLabel />
+                        </TakePictureButtonContainer>
+                        </ModalContainer>
+                        { images.length > 0 && 
+                            <ModalImagesListContainer>
+                                <ModalImagesList horizontal>
+                                { images.map((image, imgIndex) => (
+                                    <ModalImageItem key={imgIndex} source={{ uri: image.uri }} resizeMode="stretch" />
+                                ))}
+                                </ModalImagesList>
+                            </ModalImagesListContainer>
+                        }
+                        <ModalButtons>
+                        <CameraButtonContainer onPress={() => setCameraModalOpened(!cameraModalOpened)}>
+                            <CancelButtonText>Cancelar</CancelButtonText>
+                        </CameraButtonContainer>
+                        <CameraButtonContainer onPress={() => {
+                            setCameraModalOpened(!cameraModalOpened);
+
+                            const imagesData = new FormData();
+                            images.forEach((image, index) => {
+                                imagesData.append('image', {
+                                uri: image.uri,
+                                type: 'image/jpeg',
+                                name: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
+                                originalname: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
+                                filename: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
+                                fileName: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
+                                });
+                            });
+                            
+                            Api.post('/files', imagesData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                }
+                            }).then(d => console.log(d)).catch(e => {
+                                Object.keys(e).forEach(x => {
+                                    console.log(x, e[x]);
+                                })
+                            });
+
+                        }}>
+                            <ContinueButtonText>Continuar</ContinueButtonText>
+                        </CameraButtonContainer>
+                        </ModalButtons>
+                    </ModalContainer>
+                    </Modal>
         </KeyboardAvoidingView>
         );
     }
