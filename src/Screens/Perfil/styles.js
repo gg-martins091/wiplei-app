@@ -112,7 +112,7 @@ export const ContinueButtonText = styled.Text`
 export const TakePictureButtonContainer = styled.TouchableHighlight`
   position: absolute;
   alignSelf: center;
-  bottom: 20;
+  bottom: 20px;
   width: 60px;
   height: 60px;
   backgroundColor: #FFF;

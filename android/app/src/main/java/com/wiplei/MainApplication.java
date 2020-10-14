@@ -13,6 +13,11 @@ import java.util.List;
 import com.reactnativecommunity.picker.RNCPickerPackage;
 import androidx.multidex.MultiDexApplication;
 
+import android.os.Bundle;
+import com.wiplei.CustomClientFactory;
+import com.facebook.react.modules.network.OkHttpClientProvider;
+import okhttp3.OkHttpClient;
+
 public class MainApplication extends MultiDexApplication implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -47,6 +52,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    OkHttpClientProvider.setOkHttpClientFactory(new CustomClientFactory());
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

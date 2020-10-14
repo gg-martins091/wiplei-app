@@ -41,6 +41,7 @@ const EspacoDetalhe = ({navigation, route}) => {
     const [selectedDayOfWeek, setSelectedDayOfWeekState] = useState();
     const [selectedSchedule, setSelectedSchedule] = useState();
     const [daySchedules, setDaySchedules] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function getDetails() {
@@ -87,7 +88,12 @@ const EspacoDetalhe = ({navigation, route}) => {
         return (
             <View style={{backgroundColor: '#fff', height: '100%'}}>
                 <HeaderContainer>
-                    <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${details.avatar.path}`}} />
+                    {details.avatar && details.avatar.path && 
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${details.avatar.path}`}} />
+                    }
+                    {(!details.avatar || !details.avatar.path) && 
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                    }
                     <Text style={{fontSize: 22, color: '#f4511e'}}>{details.name}</Text>
                     <Text style={{fontSize: 14, color: '#888'}}>{details.sport.name}</Text>
                     <Text style={{fontSize: 12, color: '#888', textAlign: 'center'}}>R${details.price}</Text>
@@ -200,29 +206,48 @@ const EspacoDetalhe = ({navigation, route}) => {
                                 })}
                             </Picker>
                         </View>
-                        <TouchableOpacity
-                            style={{
+
+                        {loading && 
+                            <View style={{
                                 borderRadius: 5,
                                 paddingVertical: 10,
                                 paddingHorizontal: 20,
                                 backgroundColor: '#f4511e'
-                            }}
-                            onPress={async () => {
-                                if (selectedSchedule && selected) {
-                                    const data = await Api.post(`rents`, {
-                                        schedule_id: selectedSchedule,
-                                        rent_date: selected
-                                    });
+                            }}>
+                                <ActivityIndicator color="#fff" size={30}></ActivityIndicator>
+                            </View>
+                        }
 
-                                    if (data.data.id) {
-                                        navigation.navigate('MainTabs', {screen: 'Alugueis'});
+                        {!loading && 
+                            <TouchableOpacity
+                                style={{
+                                    borderRadius: 5,
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 20,
+                                    backgroundColor: '#f4511e'
+                                }}
+                                onPress={async () => {
+                                    if (selectedSchedule && selected) {
+                                        setLoading(true);
+                                        try {
+                                            const data = await Api.post(`rents`, {
+                                                schedule_id: selectedSchedule,
+                                                rent_date: selected
+                                            });
+    
+                                            if (data.data.id) {
+                                                navigation.navigate('MainTabs', {screen: 'Alugueis', forceReload: true});
+                                            }
+                                        } catch (e) {
+                                            console.log(e);
+                                        }
+                                        setLoading(false);
                                     }
-                                }
-                            }}
-
-                        >
-                            <Text style={{color: 'white'}}>Alugar</Text>
-                        </TouchableOpacity>
+                                }}
+                            >
+                                <Text style={{color: 'white'}}>Alugar</Text>
+                            </TouchableOpacity>
+                        }
                     </View>
                     
                 }

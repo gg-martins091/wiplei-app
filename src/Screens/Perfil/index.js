@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Modal, StatusBar, Dimensions, TextInput, RefreshControl } from 'react-native';
+import { View, Image, Text, ActivityIndicator, KeyboardAvoidingView, Modal, Dimensions, TextInput, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
     AmigosContainer,
@@ -16,6 +16,7 @@ import {
 } from './styles';
 import Api from '../../Service';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import ImageEditor from '@react-native-community/image-editor';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-root-toast';
 import { RNCamera } from 'react-native-camera';
@@ -59,7 +60,6 @@ const Perfil = (props) => {
                     alignItems: 'center',
                 }}
             >
-            
                 <View style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -230,6 +230,18 @@ const Perfil = (props) => {
                             if (camera) {
                                 const options = { quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true, };
                                 const data = await camera.current.takePictureAsync(options)
+                                const { uri, width, height, type } = data;
+                                const cropData = {
+                                    // 2b) By cropping from (0, 0) to (imgWidth, imgHeight),
+                                    //    we maintain the original image's dimensions
+                                    offset: { x: 0, y: 0 },
+                                    size: { width, height },
+                        
+                                    // 2c) Use the displaySize option to specify the new image size
+                                    displaySize: { width: width/5, height: height / 5 },
+                                  };
+                                const cropped = await ImageEditor.cropImage(uri, cropData);
+                                data['uri'] = cropped;
                                 setImages([...images, data]);
                             }
                         }}>
@@ -254,25 +266,38 @@ const Perfil = (props) => {
 
                             const imagesData = new FormData();
                             images.forEach((image, index) => {
-                                imagesData.append('image', {
-                                uri: image.uri,
-                                type: 'image/jpeg',
-                                name: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
-                                originalname: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
-                                filename: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
-                                fileName: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpg`,
+                                imagesData.append('file', {
+                                    uri: image.uri.replace('file:///', 'file://'),
+                                    type: 'image/jpeg',
+                                    name: `${new Date().getTime()}_${index}_${info.name}${info.surname}.jpeg`,
                                 });
                             });
-                            
                             Api.post('/files', imagesData, {
                                 headers: {
-                                    'Content-Type': 'multipart/form-data',
+                                    'Content-Type': 'multipart/form-data'
                                 }
                             }).then(d => console.log(d)).catch(e => {
                                 Object.keys(e).forEach(x => {
                                     console.log(x, e[x]);
                                 })
-                            });
+                            }); 
+
+                          /*   fetch("http://192.168.15.13:2424/files", {
+                                method: "POST",
+                                body: imagesData,
+                                headers: {
+                                    Accept: "application/json",
+                                    'Content-Type': 'multipart/form-data; boundary=sjwoqpaokswiplei'
+                                }
+                            })
+                                .then(response => {
+                                console.log("upload succes", response);
+                              
+                                })
+                                  .catch(error => {
+                                console.log("upload error", JSON.stringify(error));
+                              
+                                }); */
 
                         }}>
                             <ContinueButtonText>Continuar</ContinueButtonText>
@@ -319,12 +344,17 @@ function Amigos(props) {
             }
 
             {amigos && amigos.length == 0 &&
-                <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{
-                        textAlign: 'center',
-                        marginTop: 30
-                    }}>Você ainda não tem amigos.</Text>
-                </View>
+                <AmigosContainer {...props} 
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    } 
+                    style={{height: '100%'}}
+                    contentContainerStyle={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                        <Text style={{
+                            textAlign: 'center',
+                            marginTop: 30
+                        }}>Você ainda não tem amigos.</Text>
+                </AmigosContainer>
             }
 
             {amigos && amigos.length > 0 &&
@@ -619,12 +649,17 @@ function Encontre(props) {
             }
 
             {usuarios && usuarios.length == 0 &&
-                <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <AmigosContainer {...props}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                    style={{height: '100%'}}
+                    contentContainerStyle={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{
                         textAlign: 'center',
                         marginTop: 30
                     }}>Ninguém encontrado para adicionar.</Text>
-                </View>
+                </AmigosContainer>
             }
 
             {usuarios && usuarios.length > 0 &&

@@ -85,27 +85,8 @@ const Login = ({navigation}) => {
                     name="lock" size={20} />
                 </View>
                 
-                <TouchableOpacity 
-                    disabled={username.length == 0 || password.length == 0}
-                    onPress={() => {
-                        if (username.length > 0 && password.length > 0) {
-                            setLoading(true);
-                            signIn({ username: username.toLowerCase(), password }).then(d => {
-                                setLoading(false);
-                            }).catch(e => {
-                                setLoading(false);
-                                Toast.show(e, {
-                                    duration: Toast.durations.SHORT,
-                                    position: Toast.positions.BOTTOM,
-                                    shadow: true,
-                                    animation: true,
-                                    hideOnPress: true,
-                                });
-                            });
-                        }
-                    }} 
-                    color="#fff"
-                    style={{
+                {loading && 
+                    <View style={{
                         backgroundColor: (username.length == 0 || password.length == 0) ? "#ccc" : "#f4511e",
                         width: '80%',
                         borderRadius: 30,
@@ -113,16 +94,47 @@ const Login = ({navigation}) => {
                         height: 50,
                         alignItems: 'center',
                         marginTop: 50
-                    }}
-                >  
-                    {!loading && 
-                        <Text style={{fontSize: 16, color: "#fff"}}>Login</Text>
-                    }
-
-                    {loading &&
+                    }}>
                         <ActivityIndicator color="#fff" size={30}></ActivityIndicator>
-                    }
-                </TouchableOpacity>
+                    </View>
+                }
+
+                {!loading &&
+                    <TouchableOpacity 
+                        disabled={username.length == 0 || password.length == 0}
+                        onPress={() => {
+                            if (username.length > 0 && password.length > 0) {
+                                setLoading(true);
+                                signIn({ username: username.toLowerCase(), password }).then(d => {
+                                    setLoading(false);
+                                }).catch(e => {
+                                    console.log(JSON.stringify(e));
+                                    setLoading(false);
+                                    Toast.show("Erro ao realizar o login." + JSON.stringify(e), {
+                                        duration: Toast.durations.SHORT,
+                                        position: Toast.positions.BOTTOM,
+                                        shadow: true,
+                                        animation: true,
+                                        hideOnPress: true,
+                                    });
+                                });
+                            }
+                        }} 
+                        color="#fff"
+                        style={{
+                            backgroundColor: (username.length == 0 || password.length == 0) ? "#ccc" : "#f4511e",
+                            width: '80%',
+                            borderRadius: 30,
+                            padding: 15,
+                            height: 50,
+                            alignItems: 'center',
+                            marginTop: 50
+                        }}
+                    >  
+                        <Text style={{fontSize: 16, color: "#fff"}}>Login</Text>
+                    </TouchableOpacity>
+                }
+                
                     
                 <TouchableOpacity style={{
                     marginTop: 30

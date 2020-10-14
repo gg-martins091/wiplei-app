@@ -328,9 +328,15 @@ const Estabelecimentos = ({navigation}) => {
                                     <Word fsize="18px" fcolor="#222">{i.address}</Word>
                                 </View>
                             </View>
+                            {i.avatar && i.avatar.path &&
                             <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{
                                 uri: `${Api.defaults.baseURL}files/${i.avatar.path}`
                             }} />
+                            }
+
+                            {(!i.avatar || !i.avatar.path) &&
+                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                            }
                         </View>
                     </Estabelecimento>)
                 }

@@ -11,6 +11,18 @@ import Cadastro from './src/Screens/Cadastro';
 import Api from './src/Service';
 import { RootSiblingParent } from 'react-native-root-siblings';
 
+/* XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
+    GLOBAL.originalXMLHttpRequest :
+    GLOBAL.XMLHttpRequest;
+
+  // fetch logger
+global._fetch = fetch;
+global.fetch = function (uri, options, ...args) {
+  return global._fetch(uri, options, ...args).then((response) => {
+    console.log('Fetch', { request: { uri, options, ...args }, response });
+    return response;
+  });
+}; */
 
 const Stack = createStackNavigator();
 
@@ -113,7 +125,7 @@ export default function App({ navigation }) {
                     dispatch({ type: 'SIGN_IN', token: dt.token, id: dt.user.id, name: dt.user.name, surname: dt.user.surname });
                 });
             } catch(e) {
-                throw e.response.data.error;
+                throw e;
             }
             
           },

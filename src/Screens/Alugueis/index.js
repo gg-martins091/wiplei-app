@@ -16,7 +16,6 @@ const Tabs = createMaterialTopTabNavigator();
 const Alugueis = (props) => {
     const [items, setItems] = useState();
     const [refreshing, setRefreshing] = useState(false);
-
     async function getAlugueis() {
         const data = await Api.get(props.isInvite ? 'rent-invite' :'rents');
         setItems(data.data || []);
@@ -93,9 +92,14 @@ const Alugueis = (props) => {
                                 <Word fsize="18px" fcolor="#222">{i.address}</Word>
                             </View>
                         </View>
-                        <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{
-                            uri: `${Api.defaults.baseURL}files/${i.path}`
-                        }} />
+                        {i.path && 
+                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{
+                                uri: `${Api.defaults.baseURL}files/${i.path}`
+                            }} />
+                        }
+                        {!i.path &&
+                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                        }
                         
                     </View>
                     {props.isInvite &&

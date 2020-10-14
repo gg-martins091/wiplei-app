@@ -55,7 +55,7 @@ function Main(props) {
                 //tabBarBadge: 3, 
             }}
         >
-            {props => <Alugueis {...props} user={propsState.user}/>}
+            {props => <Alugueis {...props} forceReload={false} user={propsState.user}/>}
         </Tab.Screen>
 
         <Tab.Screen 

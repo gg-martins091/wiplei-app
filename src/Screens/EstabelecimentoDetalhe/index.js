@@ -54,7 +54,12 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
             <View>
                 <HeaderContainer>
                     <View style={{width: 200, height: 100}}>
-                    <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${establishment.avatar.path}`}} />
+                    {establishment.avatar && establishment.avatar.path &&
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${establishment.avatar.path}`}} />
+                    }
+                    {(!establishment.avatar || !establishment.avatar.path) &&
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                    }
                         {!establishment.open && 
                             <View style={{borderRadius: 10, position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', width: 200, height: 100, backgroundColor: 'rgba(100,100,100,0.8)'}}>
                                 <Text style={{fontWeight: '500', fontSize: 16, letterSpacing: 1, color: "#f4511e"}}>Fechado</Text>
@@ -64,8 +69,8 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                     </View>
                     <View style={{display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', alignItems: 'center'}}>
                         <Text style={{marginRight: 20, fontSize: 16, color: '#888'}}>{establishment.name}</Text>
-                        <View style={{display: 'flex', flexDirection: 'row'}}>
-                            <Icon name="star" size={20} color="#f4511e" />
+                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                            <Icon name="star" size={20} color="#f4511e" style={{marginRight: 5}} />
                             <Text style={{fontSize: 12, color: '#888', textAlign: 'center'}}>{establishment.stars}</Text>
                         </View>
                     </View>
@@ -133,7 +138,13 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                                         Clique aqui para alugar este espaço
                                     </Text>
                                 </View>
-                                <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${v.avatar.path}`}} />
+                                {v.avatar && v.avatar.path && 
+                                    <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${v.avatar.path}`}} />
+                                }
+
+                                {(!v.avatar || !v.avatar.path) &&
+                                    <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                                }
                             </View>
                         </Espaco>
                     ))}

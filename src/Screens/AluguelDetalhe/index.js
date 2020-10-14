@@ -19,6 +19,11 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const InviteTab = createMaterialTopTabNavigator();
 const months = ['Jan','Fev','MAr','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
+const avaliacao = {
+    1: 'Boa',
+    2: 'Normal',
+    3: 'Ruim'
+}
 
 const Aluguel = ({user, route}) => {
     const [msgs, setMsgs] = useState([]);
@@ -52,16 +57,21 @@ const Aluguel = ({user, route}) => {
         setAcceptedInvites(data.data);
         return true;
     }
-    
-    useEffect(() => {
-        async function getDetails() {
-            try {
-                const data = await Api.get(`rents/${route.params.id}`);
-                console.log(data.data, user.userId) 
-                setDetails(data.data);
-            } catch (e) {
-            }
+    async function getDetails() {
+        try {
+            const data = await Api.get(`rents/${route.params.id}`);
+            const a = new Date(`${data.data.rent_date.substr(0,10)}T${data.data.finish_hour}`);
+            const b = new Date();
+            const calc = (b.getTime() - a.getTime()) / 1000 / 60 / 60;
+            setDetails({...data.data, isDone: calc > 20});
+            return true;
+        } catch (e) {
+            console.log(e); 
         }
+    }
+
+    useEffect(() => {
+       
         getDetails();
         getInviteList();
         getInvitesSent();
@@ -110,7 +120,7 @@ const Aluguel = ({user, route}) => {
                         </View>
                     </TitleBox>
                 </HeaderTop>
-                {details.owner_id == user.userId && 
+                {details.owner_id == user.userId && !details.isDone &&
                     <View>
                         <TouchableOpacity style={{backgroundColor: '#f4511e', padding: 5, borderRadius: 5}}
                             onPress={async () => {
@@ -124,16 +134,14 @@ const Aluguel = ({user, route}) => {
                                     const invitesSentData = await Api.get(`/rent-invite/${route.params.id}`);
                                     setInvitesSent(invitesSentData.data); 
                                 }
-                                
-                            }
-                            }>
+                            }}>
                             <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}> {chat ? 'Convidar pessoas' : 'Voltar ao chat'} </Text>
                         </TouchableOpacity>
                     </View>
                 }
             </Header>
 
-            {!chat &&
+            {!chat && !details.isDone &&
                 <InviteTab.Navigator lazy={true} lazyPlaceholder={() => (<Text>Loading...</Text>)}>
                     <InviteTab.Screen name="Invites" options={{
                         title: 'Convidar'
@@ -337,7 +345,7 @@ const Aluguel = ({user, route}) => {
             }
 
             
-            {chat &&
+            {chat && !details.isDone &&
             <>
                 <Chat 
                     contentContainerStyle={{
@@ -393,6 +401,94 @@ const Aluguel = ({user, route}) => {
                     </TouchableOpacity>
                 </ChatInputContainer>
                 </>
+            }
+
+            {details.isDone && !details.evaluation &&
+                <View style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: 150
+                }}>
+                    <Text style={{
+                        fontSize: 16,
+                        color: '#f4511e',
+                        marginBottom: 30
+                    }}>
+                        Como foi a sua experiência nesta locação?
+                    </Text>
+                    <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                    }}>
+                        {Object.keys(avaliacao).map(ak => {
+                            return (
+                                <TouchableOpacity style={{
+                                    paddingVertical: 5,
+                                    paddingHorizontal: 10,
+                                    borderRadius: 5,
+                                    backgroundColor:  '#fff',
+                                    marginRight: 15
+                                }}
+                                    onPress={async () => {
+                                        await Api.post(`/rents/evaluate/${details.id}`, {
+                                            evaluation: ak
+                                        });
+                                        getDetails();
+
+                                    }}
+                                >
+                                    <Text style={{
+                                        color: '#000'
+                                    }}>
+                                        {avaliacao[ak]}
+                                    </Text>
+                                </TouchableOpacity>
+                            )
+                        })}
+                    </View>
+                </View>
+            }
+
+            {details.isDone && details.evaluation &&
+                <View style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: 150
+                }}>
+                    <Text style={{
+                        fontSize: 16,
+                        color: '#f4511e',
+                        marginBottom: 30
+                    }}>
+                        Obrigado por avaliar sua esperiência!
+                    </Text>
+                    <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                    }}>
+                        {Object.keys(avaliacao).map(ak => {
+                            return (
+                                <View style={{
+                                    paddingVertical: 5,
+                                    paddingHorizontal: 10,
+                                    borderRadius: 5,
+                                    backgroundColor: details.evaluation && details.evaluation == ak ? '#f4511e' : '#ececec',
+                                    marginRight: 15
+                                }}>
+                                    <Text style={{
+                                        color: details.evaluation && details.evaluation == ak ? '#fff' : '#777'
+                                    }}>
+                                        {avaliacao[ak]}
+                                    </Text>
+                                </View>
+                            )
+                        })}
+                    </View>
+                </View>
             }
             </>
         );
