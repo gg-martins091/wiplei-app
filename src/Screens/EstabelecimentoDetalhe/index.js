@@ -58,7 +58,7 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                         <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${establishment.avatar.path}`}} />
                     }
                     {(!establishment.avatar || !establishment.avatar.path) &&
-                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: 'https://api.wiplei.com/files/placeholder.png'}} />
                     }
                         {!establishment.open && 
                             <View style={{borderRadius: 10, position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', width: 200, height: 100, backgroundColor: 'rgba(100,100,100,0.8)'}}>
@@ -143,7 +143,7 @@ const EstabelecimentoDetalhe = ({navigation, route}) => {
                                 }
 
                                 {(!v.avatar || !v.avatar.path) &&
-                                    <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                                    <Image style={{borderRadius: 10, width: 120, height: 80}} resizeMethod="resize" source={{uri: 'https://api.wiplei.com/files/placeholder.png'}} />
                                 }
                             </View>
                         </Espaco>

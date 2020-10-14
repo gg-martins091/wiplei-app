@@ -335,7 +335,7 @@ const Estabelecimentos = ({navigation}) => {
                             }
 
                             {(!i.avatar || !i.avatar.path) &&
-                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                            <Image style={{borderRadius: 5, width: 100, height: 80}} resizeMethod="resize" source={{uri: 'https://api.wiplei.com/files/placeholder.png'}} />
                             }
                         </View>
                     </Estabelecimento>)

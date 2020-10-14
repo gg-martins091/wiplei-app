@@ -92,7 +92,7 @@ const EspacoDetalhe = ({navigation, route}) => {
                         <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: `${Api.defaults.baseURL}files/${details.avatar.path}`}} />
                     }
                     {(!details.avatar || !details.avatar.path) && 
-                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={require('../../../assets/placeholder.png')} />
+                        <Image style={{borderRadius: 10, width: 200, height: 100}} resizeMethod="resize" source={{uri: 'https://api.wiplei.com/files/placeholder.png'}} />
                     }
                     <Text style={{fontSize: 22, color: '#f4511e'}}>{details.name}</Text>
                     <Text style={{fontSize: 14, color: '#888'}}>{details.sport.name}</Text>

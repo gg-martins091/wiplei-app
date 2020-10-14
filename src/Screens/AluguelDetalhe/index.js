@@ -78,9 +78,9 @@ const Aluguel = ({user, route}) => {
         getAcceptedInvitesSent();
         
 
-        const unsubscribe = Firestore().collection('chat').doc(route.params.chat_id).collection('msgs').onSnapshot(snap => {
+        const unsubscribe = Firestore().collection('chat').doc(route.params.chat_id).collection('msgs').orderBy('created_at', 'asc').onSnapshot(snap => {
             if (snap && !snap.empty) {
-                const data = snap.docs.map(doc => doc.data())
+                const data = snap.docs.map(doc => doc.data());
                 setMsgs(data);
             }
         });
@@ -422,9 +422,9 @@ const Aluguel = ({user, route}) => {
                         flexDirection: 'row',
                         justifyContent: 'space-between'
                     }}>
-                        {Object.keys(avaliacao).map(ak => {
+                        {Object.keys(avaliacao).map((ak, aki) => {
                             return (
-                                <TouchableOpacity style={{
+                                <TouchableOpacity key={aki} style={{
                                     paddingVertical: 5,
                                     paddingHorizontal: 10,
                                     borderRadius: 5,
@@ -470,9 +470,9 @@ const Aluguel = ({user, route}) => {
                         flexDirection: 'row',
                         justifyContent: 'space-between'
                     }}>
-                        {Object.keys(avaliacao).map(ak => {
+                        {Object.keys(avaliacao).map((ak, aki) => {
                             return (
-                                <View style={{
+                                <View key={aki} style={{
                                     paddingVertical: 5,
                                     paddingHorizontal: 10,
                                     borderRadius: 5,
