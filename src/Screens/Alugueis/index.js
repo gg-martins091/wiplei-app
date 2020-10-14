@@ -74,12 +74,18 @@ const Alugueis = (props) => {
         {items && items.length > 0 && items.map((i, k) => {
             return (
                 <AluguelBox key={k} onPress={props.isInvite ? null : () => props.navigation.push('AluguelDetalhe', {id: i.id, chat_id: i.chat_id})}>
+                    {i.evaluation &&
+                        <Word fcolor="#f4511e" style={{textAlign: 'right'}}>Você já avaliou este aluguél!</Word>
+                    }
+                    
                     <View>
                         <Word fsize="20px">{i.name}</Word>
                     </View>
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <View style={{flexWrap: 'wrap', flexGrow: 0, flexBasis: 250}}>
+                            
                             <View style={{display: 'flex', flexDirection: 'row'}}>
+                                <Word style={{marginRight: 10}} fsize="14px" fcolor="#888">{i.space_name}</Word>
                                 <Icon name="star" size={20} color="#f4511e" />
                                 <Word fsize="14px" fcolor="#666">{i.stars}</Word>
                             </View>

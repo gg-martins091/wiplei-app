@@ -162,8 +162,9 @@ const Cadastro = ({navigation}) => {
                     <TouchableOpacity 
                         disabled={surname.length == 0 || name.length == 0 || email.length == 0 || password.length == 0}
                         onPress={() => {
-                            if (phone.length < 6 || name.length > 0 || surname.length > 0 || email.length > 0 && password.length > 0) {
-                                signUp({ phone: phone, surname: surname.toLowerCase(), email: email.toLowerCase(), name: name.toLowerCase(), password }).then(d => {
+                            console.log((phone.length > 6 && name.length > 0 && surname.length > 0 && email.length > 0 && password.length > 0));
+                            if (phone.length > 6 && name.length > 0 && surname.length > 0 && email.length > 0 && password.length > 0) {
+                                signUp({ phone: phone, surname: surname.charAt(0).toUpperCase() + surname.slice(1).toLowerCase() , email: email.toLowerCase(), name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(), password }).then(d => {
                                     Toast.show('Cadastro realizado com sucesso.', {
                                         duration: Toast.durations.SHORT,
                                         position: Toast.positions.BOTTOM,

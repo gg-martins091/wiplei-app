@@ -112,8 +112,9 @@ const Aluguel = ({user, route}) => {
                     </DateBox>
                     <TitleBox>
                         <Text style={{fontSize: 18}}>{details.establishment_name}</Text>
+                        <Text style={{fontSize: 14, marginBottom: 10, color: '#888'}}>{details.space_name}</Text>
                         <Text style={{fontSize: 16, color: '#666'}}>{details.establishment_address}</Text>
-                        <Text style={{fontSize: 12, marginTop: 8, color: '#666'}}>{details.init_hour.substring(0,5)}h às {details.finish_hour.substring(0,5)}h </Text>
+                        <Text style={{fontSize: 12, marginTop: 3, color: '#666'}}>{details.init_hour.substring(0,5)}h às {details.finish_hour.substring(0,5)}h </Text>
                         <View style={{display: 'flex', flexDirection: 'row', marginTop: 15}}>
                             <Icon name="check-circle-outline" size={20} color="#f4511e" style={{marginRight: 5}}/>
                             <Text style={{fontSize: 12, marginTop: 3, color: '#666'}}>{details.count} pessoa{details.count > 1 && 's'} confirm{details.count == 1 ? 'ou' : 'aram'} presença</Text>
